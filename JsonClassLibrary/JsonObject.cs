@@ -18,7 +18,7 @@ namespace JsonClassLibrary
                 if (string.IsNullOrEmpty(key))
                     throw new ArgumentNullException(nameof(key));
                 if (key.StartsWith("$."))
-                    return GetPath(key);
+                    return GetFromPath(key);
                 if (_data.ContainsKey(key))
                     return _data[key];
                 return null;
@@ -28,7 +28,7 @@ namespace JsonClassLibrary
                 if (string.IsNullOrEmpty(key))
                     throw new ArgumentNullException(nameof(key));
                 if (key.StartsWith("$."))
-                    SetPath(key, value);
+                    SetFromPath(key, value);
                 else if (_data.ContainsKey(key))
                     _data[key] = value;
                 else
@@ -36,112 +36,128 @@ namespace JsonClassLibrary
             }
         }
 
-        private object? GetPath(string key)
+        private object? GetFromPath(string path)
         {
             try
             {
-                string path = key[2..];
-                if (string.IsNullOrEmpty(path) || path == "$")
-                    throw new Exception();
-                if (path.Contains('.'))
+                var keys = SplitPath(path);
+                JsonObject? currJO = this;
+                for (int i = 0; i < keys.Length-1; i++)
                 {
-                    string currKey = path[..path.IndexOf('.')];
-                    string remainingPath = path[(path.IndexOf('.') + 1)..];
-                    if (string.IsNullOrEmpty(currKey) ||
-                        string.IsNullOrEmpty(remainingPath) ||
-                        currKey == "$" ||
-                        remainingPath == "$")
+                    if (string.IsNullOrEmpty(keys[i]))
                         throw new Exception();
-                    if (_data.ContainsKey(currKey))
+                    if (currJO == null)
+                        throw new Exception();
+                    if (i < keys.Length - 1)
                     {
-                        JsonObject? jsonObject = (JsonObject?)_data[currKey];
-                        if (jsonObject != null)
-                            return jsonObject.GetPath($"$.{remainingPath}");
+                        if (currJO[keys[i]] == null)
+                            return null;
+                        currJO = (JsonObject?)currJO[keys[i]];
                     }
-                    return null;
+                    else
+                        return currJO[keys[i]];
                 }
-                return this[path];
+                throw new Exception();
             }
             catch (Exception)
             {
-                throw new ArgumentException($"Invalid path: {key}");
+                throw new ArgumentException($"Invalid path: {path}");
             }
         }
 
-        private void SetPath(string key, object? value)
+        private void SetFromPath(string path, object? value)
         {
             try
             {
-                string path = key[2..];
-                if (string.IsNullOrEmpty(path) || path == "$")
-                    throw new Exception();
-                if (path.Contains('.'))
+                var keys = SplitPath(path);
+                JsonObject? currJO = this;
+                for (int i = 0; i < keys.Length; i++)
                 {
-                    string currKey = path[..path.IndexOf('.')];
-                    string remainingPath = path[(path.IndexOf('.') + 1)..];
-                    if (string.IsNullOrEmpty(currKey) ||
-                        string.IsNullOrEmpty(remainingPath) ||
-                        currKey == "$" ||
-                        remainingPath == "$")
+                    if (string.IsNullOrEmpty(keys[i]))
                         throw new Exception();
-                    if (_data.ContainsKey(currKey))
+                    if (currJO == null)
+                        throw new Exception();
+                    if (i < keys.Length - 1)
                     {
-                        JsonObject? jsonObject = (JsonObject?)_data[currKey];
-                        if (jsonObject != null)
-                            jsonObject.SetPath($"$.{remainingPath}", value);
+                        if (currJO[keys[i]] == null)
+                            currJO[keys[i]] = new JsonObject();
+                        currJO = (JsonObject?)currJO[keys[i]];
                     }
-                    JsonObject? newJsonObject = new();
-                    _data[currKey] = newJsonObject;
-                    newJsonObject.SetPath($"$.{remainingPath}", value);
-                }
-                else
-                {
-                    this[path] = value;
+                    else
+                        currJO[keys[i]] = value;
                 }
             }
             catch (Exception)
             {
-                throw new ArgumentException($"Invalid path: {key}");
+                throw new ArgumentException($"Invalid path: {path}");
             }
         }
 
         private string[] SplitPath(string path)
         {
-            List<string> result = new List<string>();
+            List<string> result = new();
             bool inQuote = false;
             bool escape = false;
             StringBuilder currKey = new();
-            foreach (char c in path)
+            try
             {
-                if (c == '\\')
+                foreach (char c in path[2..]) // skip "$."
                 {
-                    if (escape)
+                    switch (c)
                     {
-                        currKey.Append(c);
-                        escape = false;
+                        case '"':
+                            if (escape)
+                            {
+                                currKey.Append('"');
+                                escape = false;
+                            }
+                            else if (currKey.Length == 0)
+                                inQuote = true;
+                            else
+                                inQuote = false;
+                            break;
+                        case '\\':
+                            if (escape)
+                            {
+                                currKey.Append('\\');
+                                escape = false;
+                            }
+                            else if (!inQuote)
+                                throw new Exception();
+                            else
+                                escape = true;
+                            break;
+                        case '.':
+                            if (inQuote)
+                            {
+                                currKey.Append('.');
+                                escape = false;
+                            }
+                            else if (escape)
+                                throw new Exception();
+                            else
+                            {
+                                if (currKey.Length == 0 || currKey.ToString() == "$")
+                                    throw new Exception();
+                                result.Add(currKey.ToString());
+                                currKey.Clear();
+                            }
+                            break;
+                        default:
+                            currKey.Append(c);
+                            escape = false;
+                            break;
                     }
-                    else
-                    {
-                        escape = true;
-                    }
-                    continue;
                 }
-                if (c == '"')
-                {
-                    if (!inQuote)
-                    {
-                        inQuote = true;
-                        continue;
-                    }
-                    else if (escape)
-                    {
-                        currKey.Append('"');
-                        escape = false;
-                    }
-                }
-                currKey.Append(c);
+                if (currKey.Length == 0 || currKey.ToString() == "$")
+                    throw new Exception();
+                result.Add(currKey.ToString());
+                return result.ToArray();
             }
-            return result.ToArray();
+            catch (Exception)
+            {
+                throw new ArgumentException($"Invalid path: {path}");
+            }
         }
     }
 }
