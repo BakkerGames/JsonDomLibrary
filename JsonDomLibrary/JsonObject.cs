@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace JsonClassLibrary
+namespace JsonDomLibrary
 {
     public class JsonObject
     {

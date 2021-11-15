@@ -1,5 +1,5 @@
 using Xunit;
-using JsonClassLibrary;
+using JsonDomLibrary;
 
 namespace UnitTests;
 

@@ -1,4 +1,4 @@
-﻿namespace JsonClassLibrary
+﻿namespace JsonDomLibrary
 {
     public class JsonArray
     {

@@ -1,4 +1,4 @@
-﻿namespace JsonClassLibrary
+﻿namespace JsonDomLibrary
 {
     internal static class Routines
     {
