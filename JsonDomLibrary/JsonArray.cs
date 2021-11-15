@@ -1,6 +1,6 @@
 ﻿namespace JsonDomLibrary
 {
-    public class JsonArray
+    public class JsonArray : JsonBaseClass
     {
     }
 }

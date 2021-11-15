@@ -2,13 +2,16 @@
 
 namespace JsonDomLibrary
 {
-    public class JsonObject
+    public class JsonObject : JsonBaseClass
     {
         private readonly Dictionary<string, object?> _data;
 
-        public JsonObject()
+        public JsonObject(bool caseInsensitive = false)
         {
-            _data = new Dictionary<string, object?>();
+            if (!caseInsensitive)
+                _data = new Dictionary<string, object?>();
+            else
+                _data = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
         }
 
         public object? this[string key]
@@ -38,15 +41,49 @@ namespace JsonDomLibrary
 
         public override string ToString()
         {
+            return ToString(false, 0);
+        }
+
+        public string ToString(bool format = false)
+        {
+            return ToString(format, 0);
+        }
+
+        internal string ToString(bool format = false, int indent = 0)
+        {
             StringBuilder result = new();
             result.Append('{');
+            if (format)
+            {
+                indent++;
+                result.AppendLine();
+                result.Append(new string(' ', indent * 2));
+            }
+            bool comma = false;
             foreach (var kv in _data)
             {
-                if (result.Length > 1)
+                if (comma)
+                {
                     result.Append(',');
-                result.Append(Routines.ValueToString(kv.Key));
+                    if (format)
+                    {
+                        result.AppendLine();
+                        result.Append(new string(' ', indent * 2));
+                    }
+                }
+                else
+                    comma = true;
+                result.Append(ValueToString(kv.Key));
                 result.Append(':');
-                result.Append(Routines.ValueToString(kv.Value));
+                if (format)
+                    result.Append(' ');
+                result.Append(ValueToString(kv.Value, format, indent));
+            }
+            if (format)
+            {
+                indent--;
+                result.AppendLine();
+                result.Append(new string(' ', indent * 2));
             }
             result.Append('}');
             return result.ToString();

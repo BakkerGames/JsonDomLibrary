@@ -183,4 +183,24 @@ public class UnitTestJsonObject
         var actual = jo.ToString();
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void Test_JsonObject_CaseInsensitive()
+    {
+        JsonObject jo = new(true);
+        jo["abc"] = 123;
+        var expected = 123;
+        var actual = jo["ABC"];
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_Format()
+    {
+        JsonObject jo = new();
+        jo["$.abc.def.ghi"] = 123;
+        var expected = "{\r\n  \"abc\": {\r\n    \"def\": {\r\n      \"ghi\": 123\r\n    }\r\n  }\r\n}";
+        var actual = jo.ToString(true);
+        Assert.Equal(expected, actual);
+    }
 }

@@ -1,13 +1,13 @@
 ﻿namespace JsonDomLibrary
 {
-    internal static class Routines
+    public class JsonBaseClass
     {
-        public static string? ValueToString(object? value)
+        protected static string? ValueToString(object? value, bool format = false, int indent = 0)
         {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             if (value == null)
                 return "null";
             Type type = value.GetType();
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             if (type == typeof(bool))
                 return value.ToString().ToLower();
             if (type == typeof(string))
@@ -16,8 +16,10 @@
                     return $"\"{((string)value).Replace("\"", "\\\"")}\"";
                 return $"\"{value}\"";
             }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            if (type == typeof(JsonObject))
+                return ((JsonObject)value).ToString(format, indent);
             return value.ToString();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
     }
 }
