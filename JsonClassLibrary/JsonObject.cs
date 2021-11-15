@@ -36,13 +36,31 @@ namespace JsonClassLibrary
             }
         }
 
+        public override string ToString()
+        {
+            StringBuilder result = new();
+            result.Append('{');
+            foreach (var kv in _data)
+            {
+                if (result.Length > 1)
+                    result.Append(',');
+                result.Append(Routines.ValueToString(kv.Key));
+                result.Append(':');
+                result.Append(Routines.ValueToString(kv.Value));
+            }
+            result.Append('}');
+            return result.ToString();
+        }
+
+        #region private routines
+
         private object? GetFromPath(string path)
         {
             try
             {
                 var keys = SplitPath(path);
                 JsonObject? currJO = this;
-                for (int i = 0; i < keys.Length-1; i++)
+                for (int i = 0; i < keys.Length; i++)
                 {
                     if (string.IsNullOrEmpty(keys[i]))
                         throw new Exception();
@@ -159,5 +177,7 @@ namespace JsonClassLibrary
                 throw new ArgumentException($"Invalid path: {path}");
             }
         }
+
+        #endregion
     }
 }
