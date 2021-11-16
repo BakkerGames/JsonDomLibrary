@@ -2,14 +2,18 @@
 
 public abstract class JsonBaseClass
 {
-    protected static string? ValueToString(object? value, bool format = false, int indent = 0)
+    protected static string? ValueToString(object? value)
     {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+        return ValueToString(value, false, 0);
+    }
+
+    protected static string? ValueToString(object? value, bool format, int indent)
+    {
         if (value == null)
             return "null";
         Type type = value.GetType();
         if (type == typeof(bool))
-            return value.ToString().ToLower();
+            return value.ToString()!.ToLower();
         if (type == typeof(string))
         {
             if (((string)value).Contains('"'))
@@ -18,7 +22,8 @@ public abstract class JsonBaseClass
         }
         if (type == typeof(JsonObject))
             return ((JsonObject)value).ToString(format, indent);
+        if (type == typeof(JsonArray))
+            return ((JsonArray)value).ToString(format, indent);
         return value.ToString();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
     }
 }
