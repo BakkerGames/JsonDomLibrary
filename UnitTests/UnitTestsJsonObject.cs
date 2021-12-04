@@ -1,7 +1,7 @@
-using Xunit;
 using JsonDomLibrary;
+using Xunit;
 
-namespace UnitTests;
+namespace JsonDomLibraryTests;
 
 public class UnitTestJsonObject
 {
@@ -201,6 +201,18 @@ public class UnitTestJsonObject
         jo["$.abc.def.ghi"] = 123;
         var expected = "{\r\n  \"abc\": {\r\n    \"def\": {\r\n      \"ghi\": 123\r\n    }\r\n  }\r\n}";
         var actual = jo.ToString(true);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_AddJsonArray()
+    {
+        JsonObject jo = new();
+        jo["abc"] = 123;
+        jo["list"] = new JsonArray();
+        ((JsonArray?)jo["list"])?.Add("xyz");
+        var expected = "{\"abc\":123,\"list\":[\"xyz\"]}";
+        var actual = jo.ToString();
         Assert.Equal(expected, actual);
     }
 }

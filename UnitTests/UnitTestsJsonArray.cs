@@ -1,7 +1,7 @@
-﻿using Xunit;
-using JsonDomLibrary;
+﻿using JsonDomLibrary;
+using Xunit;
 
-namespace UnitTests;
+namespace JsonDomLibraryTests;
 
 public class UnitTestsJsonArray
 {
@@ -61,6 +61,16 @@ public class UnitTestsJsonArray
         ja.Add("DEF");
         ja.Add("ghi");
         var expected = "[\"abc\",\"DEF\",\"ghi\"]";
+        var actual = ja.ToString();
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonArray_ToString_Unicode()
+    {
+        JsonArray ja = new();
+        ja.Add("\u263A");
+        var expected = "[\"\\u263a\"]";
         var actual = ja.ToString();
         Assert.Equal(expected, actual);
     }
