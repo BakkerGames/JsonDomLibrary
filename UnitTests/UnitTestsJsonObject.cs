@@ -253,4 +253,22 @@ public class UnitTestJsonObject
         var actual = jo.ToString();
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void Test_JsonObject_Parse_Whitespace_Comments()
+    {
+        var initial = "/*beginning*/  {" +
+            "  \"a\"  :  123  , //hello!\n" +
+            "  \"b\"  :  \"string\" /* skip this */ ," +
+            "  \"c\"  :  null  ," +
+            "/* skip me too \r\n hi! */  \"d\"  :  true // skip me ,\r" +
+            " , \"e\"  :  false  ," +
+            "  \"f\"  :  {  \"x\"  :  999  }  ," +
+            "  \"g\"  :  [  3.14  ]  " +
+            "  }  // and check the end";
+        JsonObject jo = JsonObject.Parse(initial);
+        var expected = "{\"a\":123,\"b\":\"string\",\"c\":null,\"d\":true,\"e\":false,\"f\":{\"x\":999},\"g\":[3.14]}";
+        var actual = jo.ToString();
+        Assert.Equal(expected, actual);
+    }
 }

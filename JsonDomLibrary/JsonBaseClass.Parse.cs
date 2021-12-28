@@ -87,12 +87,61 @@ public abstract partial class JsonBaseClass
 
     internal static void SkipWhitespace(string data, ref int pos)
     {
+        bool lastSlash = false;
+        bool lastAsterisk = false;
+        bool inLineComment = false;
+        bool inMultiComment = false;
         while (pos < data.Length)
         {
-            char c = data[pos];
+            char c = data[pos++];
+            if (lastSlash)
+            {
+                lastSlash = false;
+                if (c == '/')
+                {
+                    inLineComment = true;
+                    continue;
+                }
+                if (c == '*')
+                {
+                    inMultiComment = true;
+                    continue;
+                }
+                throw new ArgumentException(INVALID_JSON);
+            }
+            if (inLineComment)
+            {
+                if (c == '\r' || c == '\n')
+                {
+                    inLineComment = false;
+                }
+                continue;
+            }
+            if (inMultiComment)
+            {
+                if (c == '*')
+                {
+                    lastAsterisk = true;
+                    continue;
+                }
+                if (c == '/' && lastAsterisk)
+                {
+                    inMultiComment = false;
+                }
+                lastAsterisk = false;
+                continue;
+            }
+            if (c == '/')
+            {
+                lastSlash = true;
+                continue;
+            }
             if (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f' || c == '\b')
-                pos++;
-            else return;
+            {
+                continue;
+            }
+            pos--;
+            return;
         }
     }
 
