@@ -59,6 +59,8 @@ public class JsonArray : JsonBaseClass, IEnumerable
         _data.RemoveAt(index);
     }
 
+    #region ToString
+
     public override string ToString()
     {
         return ToString(false, 0);
@@ -104,4 +106,17 @@ public class JsonArray : JsonBaseClass, IEnumerable
         result.Append(']');
         return result.ToString();
     }
+
+    #endregion
+
+    #region Parse
+
+    public static JsonArray Parse(string data)
+    {
+        int pos = 0;
+        return GetValueArray(data, ref pos);
+    }
+
+    #endregion
+
 }

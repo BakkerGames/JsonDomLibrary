@@ -96,6 +96,16 @@ public class JsonObject : JsonBaseClass, IEnumerable
 
     #endregion
 
+    #region Parse
+
+    public static JsonObject Parse(string data)
+    {
+        int pos = 0;
+        return GetValueObject(data, ref pos);
+    }
+
+    #endregion
+
     #region private routines
 
     private object? GetFromPath(string path)

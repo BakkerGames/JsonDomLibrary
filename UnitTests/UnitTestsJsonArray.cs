@@ -158,4 +158,13 @@ public class UnitTestsJsonArray
         }
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void Test_JsonArray_Parse()
+    {
+        var expected = "[null,true,false,123,\"abc\"]";
+        JsonArray ja = JsonArray.Parse(expected);
+        var actual = ja.ToString();
+        Assert.Equal(expected, actual);
+    }
 }

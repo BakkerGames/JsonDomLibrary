@@ -40,6 +40,17 @@ public class UnitTestJsonObject
     }
 
     [Fact]
+    public void Test_JsonObject_SetPathGetPathEscaped_Value()
+    {
+        JsonObject jo = new();
+        var path = "$.\"level 1\".\"level.2\".\"  level3  \"";
+        var origValue = "ABC";
+        jo[path] = origValue;
+        var newValue = jo[path];
+        Assert.Equal(origValue, newValue);
+    }
+
+    [Fact]
     public void Test_JsonObject_SetPathGetPath_Value()
     {
         JsonObject jo = new();
@@ -212,6 +223,33 @@ public class UnitTestJsonObject
         jo["list"] = new JsonArray();
         ((JsonArray?)jo["list"])?.Add("xyz");
         var expected = "{\"abc\":123,\"list\":[\"xyz\"]}";
+        var actual = jo.ToString();
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_Parse()
+    {
+        var expected = "{\"a\":123,\"b\":\"string\",\"c\":null,\"d\":true,\"e\":false,\"f\":{\"x\":999},\"g\":[3.14]}";
+        JsonObject jo = JsonObject.Parse(expected);
+        var actual = jo.ToString();
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_Parse_Whitespace()
+    {
+        var initial = "  {" +
+            "  \"a\"  :  123  ," +
+            "  \"b\"  :  \"string\"  ," +
+            "  \"c\"  :  null  ," +
+            "  \"d\"  :  true  ," +
+            "  \"e\"  :  false  ," +
+            "  \"f\"  :  {  \"x\"  :  999  }  ," +
+            "  \"g\"  :  [  3.14  ]  " +
+            "  }  ";
+        JsonObject jo = JsonObject.Parse(initial);
+        var expected = "{\"a\":123,\"b\":\"string\",\"c\":null,\"d\":true,\"e\":false,\"f\":{\"x\":999},\"g\":[3.14]}";
         var actual = jo.ToString();
         Assert.Equal(expected, actual);
     }

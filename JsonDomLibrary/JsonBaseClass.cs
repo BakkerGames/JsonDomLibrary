@@ -1,6 +1,6 @@
 ﻿namespace JsonDomLibrary;
 
-public abstract class JsonBaseClass
+public abstract partial class JsonBaseClass
 {
     protected static string? ValueToString(object? value)
     {
