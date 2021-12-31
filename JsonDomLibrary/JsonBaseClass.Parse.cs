@@ -13,14 +13,14 @@ public abstract partial class JsonBaseClass
         while (token?.ToString() != "}")
         {
             if (GetValue(data, ref pos)?.ToString() != ":")
-                throw new ArgumentException(INVALID_JSON);
+                throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {token}");
             object? value = GetValue(data, ref pos);
             result[token?.ToString()] = value;
             token = GetValue(data, ref pos);
             if (token?.ToString() == ",")
                 token = GetValue(data, ref pos);
             else if (token?.ToString() != "}")
-                throw new ArgumentException(INVALID_JSON);
+                throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {token}");
         }
         return result;
     }
@@ -37,7 +37,7 @@ public abstract partial class JsonBaseClass
             if (token?.ToString() == ",")
                 token = GetValue(data, ref pos);
             else if (token?.ToString() != "]")
-                throw new ArgumentException(INVALID_JSON);
+                throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {token}");
         }
         return result;
     }
@@ -45,7 +45,8 @@ public abstract partial class JsonBaseClass
     internal static object? GetValue(string data, ref int pos)
     {
         SkipWhitespace(data, ref pos);
-        if (pos >= data.Length) throw new ArgumentException(INVALID_JSON);
+        if (pos >= data.Length)
+            throw new ArgumentException($"{INVALID_JSON} - pos:{pos}");
         char c = data[pos];
         if (c == '}' || c == ']' || c == ':' || c == ',')
         {
@@ -54,7 +55,7 @@ public abstract partial class JsonBaseClass
         }
         if (c == '"')
             return GetValueString(data, ref pos);
-        if (c >= '0' && c <= '9')
+        if ((c >= '0' && c <= '9') || c == '-' || c == '.')
             return GetValueNumber(data, ref pos);
         if (c == '{')
             return GetValueObject(data, ref pos);
@@ -66,7 +67,7 @@ public abstract partial class JsonBaseClass
             return true;
         if (c == 'f' && GetWord(data, ref pos) == "false")
             return false;
-        throw new ArgumentException(INVALID_JSON);
+        throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {c}");
     }
 
     private static string GetWord(string data, ref int pos)
@@ -107,7 +108,7 @@ public abstract partial class JsonBaseClass
                     inMultiComment = true;
                     continue;
                 }
-                throw new ArgumentException(INVALID_JSON);
+                throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {c}");
             }
             if (inLineComment)
             {

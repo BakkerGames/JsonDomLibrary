@@ -40,6 +40,37 @@ public class UnitTestJsonObject
     }
 
     [Fact]
+    public void Test_JsonObject_GetPath_JsonArray()
+    {
+        JsonObject jo1 = new();
+        JsonArray ja2 = new();
+        JsonObject jo3 = new();
+        jo3["level3"] = 123;
+        ja2.Add(null);
+        ja2.Add(null);
+        ja2.Add(jo3);
+        jo1["level1"] = ja2;
+        var value = jo1["$.level1.2.level3"];
+        Assert.Equal(123, value);
+    }
+
+    [Fact]
+    public void Test_JsonObject_SetPath_JsonArray()
+    {
+        JsonObject jo1 = new();
+        JsonArray ja2 = new();
+        JsonObject jo3 = new();
+        jo3["level3"] = null;
+        ja2.Add(null);
+        ja2.Add(null);
+        ja2.Add(jo3);
+        jo1["level1"] = ja2;
+        jo1["$.level1.2.level3"] = 123;
+        var value = jo1["$.level1.2.level3"];
+        Assert.Equal(123, value);
+    }
+
+    [Fact]
     public void Test_JsonObject_SetPathGetPathEscaped_Value()
     {
         JsonObject jo = new();
@@ -133,6 +164,15 @@ public class UnitTestJsonObject
         Assert.Equal(expected, actual);
     }
 
+
+    [Fact]
+    public void Test_JsonObject_Parse_Decimal_NoLeadingZeroNegative()
+    {
+        var expected = "{\"abc\":-0.456}";
+        JsonObject jo = JsonObject.Parse(expected);
+        var actual = jo.ToString();
+        Assert.Equal(expected, actual);
+    }
     [Fact]
     public void Test_JsonObject_ToString_String()
     {

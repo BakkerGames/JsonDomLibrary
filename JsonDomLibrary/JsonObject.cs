@@ -113,23 +113,23 @@ public class JsonObject : JsonBaseClass, IEnumerable
         try
         {
             var keys = SplitPath(path);
-            JsonObject? currJO = this;
+            object? obj = this;
             for (int i = 0; i < keys.Length; i++)
             {
-                if (string.IsNullOrEmpty(keys[i]))
-                    throw new Exception();
-                if (currJO == null)
-                    throw new Exception();
-                if (i < keys.Length - 1)
+                if (obj == null)
+                    return null;
+                if (obj.GetType() == typeof(JsonObject))
                 {
-                    if (currJO[keys[i]] == null)
-                        return null;
-                    currJO = (JsonObject?)currJO[keys[i]];
+                    obj = ((JsonObject)obj)[keys[i]];
                 }
-                else
-                    return currJO[keys[i]];
+                else if (obj.GetType() == typeof(JsonArray))
+                {
+                    int index = int.Parse(keys[i]);
+                    obj = ((JsonArray)obj)[index];
+                }
+                else throw new Exception();
             }
-            throw new Exception();
+            return obj;
         }
         catch (Exception)
         {
@@ -142,22 +142,37 @@ public class JsonObject : JsonBaseClass, IEnumerable
         try
         {
             var keys = SplitPath(path);
-            JsonObject? currJO = this;
-            for (int i = 0; i < keys.Length; i++)
+            object? obj = this;
+            for (int i = 0; i < keys.Length - 1; i++)
             {
-                if (string.IsNullOrEmpty(keys[i]))
-                    throw new Exception();
-                if (currJO == null)
-                    throw new Exception();
-                if (i < keys.Length - 1)
+                if (obj?.GetType() == typeof(JsonObject))
                 {
-                    if (currJO[keys[i]] == null)
-                        currJO[keys[i]] = new JsonObject();
-                    currJO = (JsonObject?)currJO[keys[i]];
+                    if (((JsonObject)obj)[keys[i]] == null)
+                    {
+                        ((JsonObject)obj)[keys[i]] = new JsonObject();
+                    }
+                    obj = ((JsonObject)obj)[keys[i]];
                 }
-                else
-                    currJO[keys[i]] = value;
+                else if (obj?.GetType() == typeof(JsonArray))
+                {
+                    int index = int.Parse(keys[i]);
+                    if (((JsonArray)obj)[index] == null)
+                    {
+                        ((JsonArray)obj)[index] = new JsonObject();
+                    }
+                    obj = ((JsonArray)obj)[index];
+                }
+                else throw new Exception();
             }
+            if (obj?.GetType() == typeof(JsonObject))
+            {
+                ((JsonObject)obj)[keys[^1]] = value;
+            }
+            else if (obj?.GetType() == typeof(JsonArray))
+            {
+                ((JsonArray)obj)[int.Parse(keys[^1])] = value;
+            }
+            else throw new Exception();
         }
         catch (Exception)
         {
@@ -209,9 +224,10 @@ public class JsonObject : JsonBaseClass, IEnumerable
                             throw new Exception();
                         else
                         {
-                            if (currKey.Length == 0 || currKey.ToString() == "$")
+                            var tempKey = currKey.ToString();
+                            if (string.IsNullOrWhiteSpace(tempKey))
                                 throw new Exception();
-                            result.Add(currKey.ToString());
+                            result.Add(tempKey);
                             currKey.Clear();
                         }
                         break;
@@ -221,9 +237,10 @@ public class JsonObject : JsonBaseClass, IEnumerable
                         break;
                 }
             }
-            if (currKey.Length == 0 || currKey.ToString() == "$")
+            var tempKey2 = currKey.ToString();
+            if (string.IsNullOrWhiteSpace(tempKey2))
                 throw new Exception();
-            result.Add(currKey.ToString());
+            result.Add(tempKey2);
             return result.ToArray();
         }
         catch (Exception)

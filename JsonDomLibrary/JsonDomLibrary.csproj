@@ -6,15 +6,11 @@
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.1.1</Version>
+    <Version>1.1.4</Version>
     <Copyright>Copyright 2021 by BakkerGames</Copyright>
     <Company>BakkerGames</Company>
     <Authors>BakkerGames</Authors>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy bin\Debug\*.nupkg ..\..\_LocalNuGet /y" />
-  </Target>
 
 </Project>
