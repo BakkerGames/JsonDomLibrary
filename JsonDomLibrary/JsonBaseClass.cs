@@ -27,7 +27,7 @@ public abstract partial class JsonBaseClass
 
     private static string ToJsonString(string s)
     {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
         bool lastBackslash = false;
         foreach (char c in s)
         {
