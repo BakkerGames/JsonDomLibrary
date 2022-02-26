@@ -42,6 +42,16 @@ public class JsonObject : JsonBaseClass, IEnumerable
         }
     }
 
+    public JsonArray GetJsonArray(string key)
+    {
+        return (JsonArray)(this[key] ?? new JsonArray());
+    }
+
+    public JsonObject GetJsonObject(string key)
+    {
+        return (JsonObject)(this[key] ?? new JsonObject());
+    }
+
     #region ToString
 
     public override string ToString()
@@ -180,7 +190,7 @@ public class JsonObject : JsonBaseClass, IEnumerable
         }
     }
 
-    private string[] SplitPath(string path)
+    private static string[] SplitPath(string path)
     {
         List<string> result = new();
         bool inQuote = false;

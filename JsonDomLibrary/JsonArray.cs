@@ -35,6 +35,16 @@ public class JsonArray : JsonBaseClass, IEnumerable, IEnumerable<object>
         }
     }
 
+    public JsonArray GetJsonArray(int index)
+    {
+        return (JsonArray)(this[index] ?? new JsonArray());
+    }
+
+    public JsonObject GetJsonObject(int index)
+    {
+        return (JsonObject)(this[index] ?? new JsonObject());
+    }
+
     public int Count()
     {
         return _data.Count;
