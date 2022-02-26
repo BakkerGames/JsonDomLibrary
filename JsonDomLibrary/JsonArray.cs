@@ -1,6 +1,6 @@
 ﻿namespace JsonDomLibrary;
 
-public class JsonArray : JsonBaseClass, IEnumerable
+public class JsonArray : JsonBaseClass, IEnumerable, IEnumerable<object>
 {
     private readonly List<object> _data;
 
@@ -10,6 +10,11 @@ public class JsonArray : JsonBaseClass, IEnumerable
     }
 
     public IEnumerator GetEnumerator()
+    {
+        return _data.GetEnumerator();
+    }
+
+    IEnumerator<object> IEnumerable<object>.GetEnumerator()
     {
         return _data.GetEnumerator();
     }
