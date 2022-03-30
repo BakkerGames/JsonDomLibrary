@@ -1,38 +1,9 @@
 ﻿namespace JsonDomLibrary;
 
-public class JsonArray : JsonBaseClass, IEnumerable, IEnumerable<object>
+public class JsonArray : List<object?>
 {
-    private readonly List<object> _data;
-
     public JsonArray()
     {
-        _data = new List<object>();
-    }
-
-    public IEnumerator GetEnumerator()
-    {
-        return _data.GetEnumerator();
-    }
-
-    IEnumerator<object> IEnumerable<object>.GetEnumerator()
-    {
-        return _data.GetEnumerator();
-    }
-
-    public object? this[int index]
-    {
-        get
-        {
-            if (index < 0 || index >= _data.Count)
-                throw new ArgumentOutOfRangeException(nameof(index));
-            return _data[index];
-        }
-        set
-        {
-            if (index < 0 || index >= _data.Count)
-                throw new ArgumentOutOfRangeException(nameof(index));
-            _data[index] = value!;
-        }
     }
 
     public JsonArray GetJsonArray(int index)
@@ -43,35 +14,6 @@ public class JsonArray : JsonBaseClass, IEnumerable, IEnumerable<object>
     public JsonObject GetJsonObject(int index)
     {
         return (JsonObject)(this[index] ?? new JsonObject());
-    }
-
-    public int Count()
-    {
-        return _data.Count;
-    }
-
-    public void Clear()
-    {
-        _data.Clear();
-    }
-
-    public void Add(object? value)
-    {
-        _data.Add(value);
-    }
-
-    public void InsertAt(int index, object? value)
-    {
-        if (index < 0 || index >= Count())
-            throw new ArgumentOutOfRangeException(nameof(index));
-        _data.Insert(index, value);
-    }
-
-    public void RemoveAt(int index)
-    {
-        if (index < 0 || index >= Count())
-            throw new ArgumentOutOfRangeException(nameof(index));
-        _data.RemoveAt(index);
     }
 
     #region ToString
@@ -97,7 +39,7 @@ public class JsonArray : JsonBaseClass, IEnumerable, IEnumerable<object>
             result.Append(new string(' ', indent * 2));
         }
         bool comma = false;
-        foreach (var value in _data)
+        foreach (var value in this)
         {
             if (comma)
             {
@@ -110,7 +52,7 @@ public class JsonArray : JsonBaseClass, IEnumerable, IEnumerable<object>
             }
             else
                 comma = true;
-            result.Append(ValueToString(value, format, indent));
+            result.Append(JsonBaseClass.ValueToString(value, format, indent));
         }
         if (format)
         {
@@ -129,7 +71,7 @@ public class JsonArray : JsonBaseClass, IEnumerable, IEnumerable<object>
     public static JsonArray Parse(string data)
     {
         int pos = 0;
-        return GetValueArray(data, ref pos);
+        return JsonBaseClass.GetValueArray(data, ref pos);
     }
 
     #endregion

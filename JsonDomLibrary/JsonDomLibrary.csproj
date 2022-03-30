@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.1.6</Version>
-    <Copyright>Copyright 2021 by BakkerGames</Copyright>
+    <Version>1.2.0</Version>
+    <Copyright>Copyright 2022 by BakkerGames</Copyright>
     <Company>BakkerGames</Company>
     <Authors>BakkerGames</Authors>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>

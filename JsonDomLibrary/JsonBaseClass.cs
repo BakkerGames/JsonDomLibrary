@@ -1,13 +1,13 @@
 ﻿namespace JsonDomLibrary;
 
-public abstract partial class JsonBaseClass
+public static partial class JsonBaseClass
 {
-    protected static string? ValueToString(object? value)
+    public static string? ValueToString(object? value)
     {
         return ValueToString(value, false, 0);
     }
 
-    protected static string? ValueToString(object? value, bool format, int indent)
+    public static string? ValueToString(object? value, bool format, int indent)
     {
         if (value == null)
             return "null";
@@ -25,7 +25,7 @@ public abstract partial class JsonBaseClass
         return value.ToString();
     }
 
-    private static string ToJsonString(string s)
+    internal static string ToJsonString(string s)
     {
         StringBuilder sb = new();
         bool lastBackslash = false;

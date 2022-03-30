@@ -1,23 +1,12 @@
 ﻿namespace JsonDomLibrary;
 
-public class JsonObject : JsonBaseClass, IEnumerable
+public class JsonObject : Dictionary<string, object?>
 {
-    private readonly Dictionary<string, object?> _data;
-
-    public JsonObject(bool caseInsensitive = false)
+    public JsonObject()
     {
-        if (!caseInsensitive)
-            _data = new Dictionary<string, object?>();
-        else
-            _data = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
     }
 
-    public IEnumerator GetEnumerator()
-    {
-        return _data.Keys.GetEnumerator();
-    }
-
-    public object? this[string key]
+    public new object? this[string key]
     {
         get
         {
@@ -25,8 +14,8 @@ public class JsonObject : JsonBaseClass, IEnumerable
                 throw new ArgumentNullException(nameof(key));
             if (key.StartsWith("$."))
                 return GetFromPath(key);
-            if (_data.ContainsKey(key))
-                return _data[key];
+            if (ContainsKey(key))
+                return base[key];
             return null;
         }
         set
@@ -35,10 +24,10 @@ public class JsonObject : JsonBaseClass, IEnumerable
                 throw new ArgumentNullException(nameof(key));
             if (key.StartsWith("$."))
                 SetFromPath(key, value);
-            else if (_data.ContainsKey(key))
-                _data[key] = value;
+            else if (ContainsKey(key))
+                base[key] = value;
             else
-                _data.Add(key, value);
+                Add(key, value);
         }
     }
 
@@ -50,6 +39,17 @@ public class JsonObject : JsonBaseClass, IEnumerable
     public JsonObject GetJsonObject(string key)
     {
         return (JsonObject)(this[key] ?? new JsonObject());
+    }
+
+    public new bool Remove(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+            throw new ArgumentNullException(nameof(key));
+        if (key.StartsWith("$."))
+            return RemoveFromPath(key);
+        if (ContainsKey(key))
+            return base.Remove(key);
+        return false;
     }
 
     #region ToString
@@ -75,7 +75,7 @@ public class JsonObject : JsonBaseClass, IEnumerable
             result.Append(new string(' ', indent * 2));
         }
         bool comma = false;
-        foreach (var kv in _data)
+        foreach (var kv in this)
         {
             if (comma)
             {
@@ -88,11 +88,11 @@ public class JsonObject : JsonBaseClass, IEnumerable
             }
             else
                 comma = true;
-            result.Append(ValueToString(kv.Key));
+            result.Append(JsonBaseClass.ValueToString(kv.Key));
             result.Append(':');
             if (format)
                 result.Append(' ');
-            result.Append(ValueToString(kv.Value, format, indent));
+            result.Append(JsonBaseClass.ValueToString(kv.Value, format, indent));
         }
         if (format)
         {
@@ -111,7 +111,7 @@ public class JsonObject : JsonBaseClass, IEnumerable
     public static JsonObject Parse(string data)
     {
         int pos = 0;
-        return GetValueObject(data, ref pos);
+        return JsonBaseClass.GetValueObject(data, ref pos);
     }
 
     #endregion
@@ -183,6 +183,37 @@ public class JsonObject : JsonBaseClass, IEnumerable
                 ((JsonArray)obj)[int.Parse(keys[^1])] = value;
             }
             else throw new Exception();
+        }
+        catch (Exception)
+        {
+            throw new ArgumentException($"Invalid path: {path}");
+        }
+    }
+
+    private bool RemoveFromPath(string path)
+    {
+        try
+        {
+            var keys = SplitPath(path);
+            object? obj = this;
+            for (int i = 0; i < keys.Length - 1; i++)
+            {
+                if (obj == null)
+                    return false;
+                if (obj.GetType() == typeof(JsonObject))
+                {
+                    obj = ((JsonObject)obj)[keys[i]];
+                }
+                else if (obj.GetType() == typeof(JsonArray))
+                {
+                    int index = int.Parse(keys[i]);
+                    obj = ((JsonArray)obj)[index];
+                }
+                else throw new Exception();
+            }
+            if (obj != null)
+                return ((JsonObject)obj).Remove(keys[^1]);
+            return false;
         }
         catch (Exception)
         {

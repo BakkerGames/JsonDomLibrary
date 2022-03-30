@@ -236,13 +236,49 @@ public class UnitTestJsonObject
     }
 
     [Fact]
-    public void Test_JsonObject_CaseInsensitive()
+    public void Test_JsonObject_Remove()
     {
-        JsonObject jo = new(true);
+        JsonObject jo = new();
+        jo["abc"] = 123;
+        jo["def"] = 456;
+        jo["ghi"] = 789;
+        jo.Remove("def");
+        var expected = "{\"abc\":123,\"ghi\":789}";
+        var actual = jo.ToString();
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_Remove_JsonObject_Path()
+    {
+        JsonObject jo = new();
+        jo["$.abc.def.ghi"] = 123;
+        jo.Remove("$.abc.def.ghi");
+        var expected = "{\"abc\":{\"def\":{}}}";
+        var actual = jo.ToString();
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_Count()
+    {
+        JsonObject jo = new();
+        jo["abc"] = 123;
+        jo["def"] = 456;
+        jo["ghi"] = 789;
+        var expected = 3;
+        var actual = jo.Count;
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_CaseSensitive()
+    {
+        JsonObject jo = new();
         jo["abc"] = 123;
         var expected = 123;
         var actual = jo["ABC"];
-        Assert.Equal(expected, actual);
+        Assert.NotEqual(expected, actual);
     }
 
     [Fact]

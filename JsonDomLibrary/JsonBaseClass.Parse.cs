@@ -1,6 +1,6 @@
 ﻿namespace JsonDomLibrary;
 
-public abstract partial class JsonBaseClass
+public static partial class JsonBaseClass
 {
     private const string INVALID_JSON = "Invalid json";
 

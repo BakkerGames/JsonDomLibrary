@@ -9,7 +9,7 @@ public class UnitTestsJsonArray
     public void Test_JsonArray_CountZero()
     {
         JsonArray ja = new();
-        Assert.Equal(0, ja.Count());
+        Assert.Empty(ja);
     }
 
     [Fact]
@@ -19,7 +19,7 @@ public class UnitTestsJsonArray
         ja.Add(1);
         ja.Add(2);
         ja.Add(3);
-        Assert.Equal(3, ja.Count());
+        Assert.Equal(3, ja.Count);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class UnitTestsJsonArray
         JsonArray ja = new();
         ja.Add(1);
         ja.Add(3);
-        ja.InsertAt(1, 2);
+        ja.Insert(1, 2);
         var expected = "[1,2,3]";
         var actual = ja.ToString();
         Assert.Equal(expected, actual);
@@ -154,7 +154,7 @@ public class UnitTestsJsonArray
         {
             if (actual.Length > 0)
                 actual += "+";
-            actual += item.ToString();
+            actual += item?.ToString();
         }
         Assert.Equal(expected, actual);
     }
