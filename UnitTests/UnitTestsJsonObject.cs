@@ -236,6 +236,17 @@ public class UnitTestJsonObject
     }
 
     [Fact]
+    public void Test_JsonObject_ToStringFormatted()
+    {
+        JsonObject jo = new();
+        jo["$.abc.def.ghi"] = 123;
+        jo["$.abc.def.xyz"] = new JsonObject();
+        var expected = "{\r\n  \"abc\": {\r\n    \"def\": {\r\n      \"ghi\": 123,\r\n      \"xyz\": {}\r\n    }\r\n  }\r\n}";
+        var actual = jo.ToString(true);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void Test_JsonObject_Remove()
     {
         JsonObject jo = new();

@@ -1,6 +1,7 @@
 ﻿namespace JsonDomLibrary;
 
-public class JsonArray : List<object?>
+[Serializable()]
+public class JsonArray : List<object?>, IJsonClass
 {
     public JsonArray()
     {
@@ -16,7 +17,13 @@ public class JsonArray : List<object?>
         return (JsonObject)(this[index] ?? new JsonObject());
     }
 
-    #region ToString
+    public static JsonArray FromList(IEnumerable list)
+    {
+        JsonArray result = new();
+        foreach (object obj in list)
+            result.Add(obj);
+        return result;
+    }
 
     public override string ToString()
     {
@@ -32,48 +39,44 @@ public class JsonArray : List<object?>
     {
         StringBuilder result = new();
         result.Append('[');
-        if (format)
+        if (Count > 0)
         {
-            indent++;
-            result.AppendLine();
-            result.Append(new string(' ', indent * 2));
-        }
-        bool comma = false;
-        foreach (var value in this)
-        {
-            if (comma)
+            if (format)
             {
-                result.Append(',');
-                if (format)
-                {
-                    result.AppendLine();
-                    result.Append(new string(' ', indent * 2));
-                }
+                indent++;
+                result.AppendLine();
+                result.Append(new string(' ', indent * 2));
             }
-            else
-                comma = true;
-            result.Append(JsonBaseClass.ValueToString(value, format, indent));
-        }
-        if (format)
-        {
-            indent--;
-            result.AppendLine();
-            result.Append(new string(' ', indent * 2));
+            bool comma = false;
+            foreach (var value in this)
+            {
+                if (comma)
+                {
+                    result.Append(',');
+                    if (format)
+                    {
+                        result.AppendLine();
+                        result.Append(new string(' ', indent * 2));
+                    }
+                }
+                else
+                    comma = true;
+                result.Append(JsonRoutines.ValueToString(value, format, indent));
+            }
+            if (format)
+            {
+                indent--;
+                result.AppendLine();
+                result.Append(new string(' ', indent * 2));
+            }
         }
         result.Append(']');
         return result.ToString();
     }
 
-    #endregion
-
-    #region Parse
-
     public static JsonArray Parse(string data)
     {
         int pos = 0;
-        return JsonBaseClass.GetValueArray(data, ref pos);
+        return JsonRoutines.GetValueArray(data, ref pos);
     }
-
-    #endregion
-
 }

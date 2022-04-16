@@ -1,6 +1,6 @@
 ﻿namespace JsonDomLibrary;
 
-public static partial class JsonBaseClass
+public static partial class JsonRoutines
 {
     private const string INVALID_JSON = "Invalid json";
 
@@ -42,7 +42,7 @@ public static partial class JsonBaseClass
         return result;
     }
 
-    internal static object? GetValue(string data, ref int pos)
+    private static object? GetValue(string data, ref int pos)
     {
         SkipWhitespace(data, ref pos);
         if (pos >= data.Length)
@@ -86,7 +86,7 @@ public static partial class JsonBaseClass
         return sb.ToString();
     }
 
-    internal static void SkipWhitespace(string data, ref int pos)
+    private static void SkipWhitespace(string data, ref int pos)
     {
         bool lastSlash = false;
         bool lastAsterisk = false;
@@ -146,7 +146,7 @@ public static partial class JsonBaseClass
         }
     }
 
-    internal static string GetValueString(string data, ref int pos)
+    private static string GetValueString(string data, ref int pos)
     {
         bool lastSlash = false;
         pos++; // skip quote
@@ -180,7 +180,7 @@ public static partial class JsonBaseClass
         return sb.ToString();
     }
 
-    internal static object GetValueNumber(string data, ref int pos)
+    private static object GetValueNumber(string data, ref int pos)
     {
         StringBuilder sb = new();
         char c;

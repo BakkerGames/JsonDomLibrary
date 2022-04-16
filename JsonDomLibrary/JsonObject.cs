@@ -1,6 +1,6 @@
 ﻿namespace JsonDomLibrary;
 
-public class JsonObject : Dictionary<string, object?>
+public class JsonObject : Dictionary<string, object?>, IJsonClass
 {
     public JsonObject()
     {
@@ -52,8 +52,6 @@ public class JsonObject : Dictionary<string, object?>
         return false;
     }
 
-    #region ToString
-
     public override string ToString()
     {
         return ToString(false, 0);
@@ -64,59 +62,56 @@ public class JsonObject : Dictionary<string, object?>
         return ToString(format, 0);
     }
 
-    internal string ToString(bool format, int indent)
+    public string ToString(bool format, int indent)
     {
         StringBuilder result = new();
         result.Append('{');
-        if (format)
+        if (Count > 0)
         {
-            indent++;
-            result.AppendLine();
-            result.Append(new string(' ', indent * 2));
-        }
-        bool comma = false;
-        foreach (var kv in this)
-        {
-            if (comma)
-            {
-                result.Append(',');
-                if (format)
-                {
-                    result.AppendLine();
-                    result.Append(new string(' ', indent * 2));
-                }
-            }
-            else
-                comma = true;
-            result.Append(JsonBaseClass.ValueToString(kv.Key));
-            result.Append(':');
             if (format)
-                result.Append(' ');
-            result.Append(JsonBaseClass.ValueToString(kv.Value, format, indent));
-        }
-        if (format)
-        {
-            indent--;
-            result.AppendLine();
-            result.Append(new string(' ', indent * 2));
+            {
+                indent++;
+                result.AppendLine();
+                result.Append(new string(' ', indent * 2));
+            }
+            bool comma = false;
+            foreach (var kv in this)
+            {
+                if (comma)
+                {
+                    result.Append(',');
+                    if (format)
+                    {
+                        result.AppendLine();
+                        result.Append(new string(' ', indent * 2));
+                    }
+                }
+                else
+                    comma = true;
+                result.Append(JsonRoutines.ValueToString(kv.Key));
+                result.Append(':');
+                if (format)
+                    result.Append(' ');
+                result.Append(JsonRoutines.ValueToString(kv.Value, format, indent));
+            }
+            if (format)
+            {
+                indent--;
+                result.AppendLine();
+                result.Append(new string(' ', indent * 2));
+            }
         }
         result.Append('}');
         return result.ToString();
     }
 
-    #endregion
-
-    #region Parse
-
     public static JsonObject Parse(string data)
     {
         int pos = 0;
-        return JsonBaseClass.GetValueObject(data, ref pos);
+        return JsonRoutines.GetValueObject(data, ref pos);
     }
 
-    #endregion
-
-    #region private routines
+    #region private
 
     private object? GetFromPath(string path)
     {

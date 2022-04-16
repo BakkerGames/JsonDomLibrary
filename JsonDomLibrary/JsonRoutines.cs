@@ -1,6 +1,6 @@
 ﻿namespace JsonDomLibrary;
 
-public static partial class JsonBaseClass
+public static partial class JsonRoutines
 {
     public static string? ValueToString(object? value)
     {
@@ -18,12 +18,13 @@ public static partial class JsonBaseClass
         {
             return $"\"{ToJsonString((string)value)}\"";
         }
-        if (type == typeof(JsonObject))
-            return ((JsonObject)value).ToString(format, indent);
-        if (type == typeof(JsonArray))
-            return ((JsonArray)value).ToString(format, indent);
+        // handle JsonArray, JsonObject, and any derived types
+        if (value is IJsonClass @class)
+            return @class.ToString(format, indent);
         return value.ToString();
     }
+
+    #region private
 
     internal static string ToJsonString(string s)
     {
@@ -76,4 +77,6 @@ public static partial class JsonBaseClass
         }
         return sb.ToString();
     }
+
+    #endregion
 }
