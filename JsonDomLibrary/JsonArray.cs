@@ -17,6 +17,36 @@ public class JsonArray : List<object?>, IJsonClass
         return (JsonObject)(this[index] ?? new JsonObject());
     }
 
+    public bool? GetBool(int index)
+    {
+        return (bool?)this[index];
+    }
+
+    public string? GetString(int index)
+    {
+        return (string?)this[index];
+    }
+
+    public int? GetInt(int index)
+    {
+        return (int?)this[index];
+    }
+
+    public long? GetLong(int index)
+    {
+        return (long?)this[index];
+    }
+
+    public double? GetDouble(int index)
+    {
+        return (double?)this[index];
+    }
+
+    public decimal? GetDecimal(int index)
+    {
+        return (decimal?)this[index];
+    }
+
     public static JsonArray FromList(IEnumerable list)
     {
         JsonArray result = new();

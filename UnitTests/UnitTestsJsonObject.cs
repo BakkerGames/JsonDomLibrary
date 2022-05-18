@@ -358,4 +358,25 @@ public class UnitTestJsonObject
         var actual = jo.ToString();
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void Test_JsonObject_Parse_ErrorExtraCommas()
+    {
+        var initial = "{\"key1\":1,,,\"key2\":2}";
+        Assert.ThrowsAny<System.Exception>(() => { JsonObject.Parse(initial); });
+    }
+
+    [Fact]
+    public void Test_JsonObject_Parse_ErrorUnterminated()
+    {
+        var initial = "{\"key1\":1,\"key2\":2";
+        Assert.ThrowsAny<System.Exception>(() => { JsonObject.Parse(initial); });
+    }
+
+    [Fact]
+    public void Test_JsonObject_Parse_ErrorNoValue()
+    {
+        var initial = "{\"key1\",\"key2\"}";
+        Assert.ThrowsAny<System.Exception>(() => { JsonObject.Parse(initial); });
+    }
 }

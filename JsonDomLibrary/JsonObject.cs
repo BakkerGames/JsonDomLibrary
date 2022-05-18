@@ -41,6 +41,36 @@ public class JsonObject : Dictionary<string, object?>, IJsonClass
         return (JsonObject)(this[key] ?? new JsonObject());
     }
 
+    public bool? GetBool(string key)
+    {
+        return (bool?)this[key];
+    }
+
+    public string? GetString(string key)
+    {
+        return (string?)this[key];
+    }
+
+    public int? GetInt(string key)
+    {
+        return (int?)this[key];
+    }
+
+    public long? GetLong(string key)
+    {
+        return (long?)this[key];
+    }
+
+    public double? GetDouble(string key)
+    {
+        return (double?)this[key];
+    }
+
+    public decimal? GetDecimal(string key)
+    {
+        return (decimal?)this[key];
+    }
+
     public new bool Remove(string key)
     {
         if (string.IsNullOrWhiteSpace(key))
