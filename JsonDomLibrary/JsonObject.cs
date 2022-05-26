@@ -89,10 +89,20 @@ public class JsonObject : Dictionary<string, object?>, IJsonClass
 
     public string ToString(bool format)
     {
-        return ToString(format, 0);
+        return ToString(format, false, 0);
+    }
+
+    public string ToString(bool format, bool unquoted)
+    {
+        return ToString(format, unquoted, 0);
     }
 
     public string ToString(bool format, int indent)
+    {
+        return ToString(format, false, indent);
+    }
+
+    public string ToString(bool format, bool unquoted, int indent)
     {
         StringBuilder result = new();
         result.Append('{');
@@ -117,12 +127,14 @@ public class JsonObject : Dictionary<string, object?>, IJsonClass
                     }
                 }
                 else
+                {
                     comma = true;
-                result.Append(JsonRoutines.ValueToString(kv.Key));
+                }
+                result.Append(JsonRoutines.ValueToString(kv.Key, format, unquoted, indent));
                 result.Append(':');
                 if (format)
                     result.Append(' ');
-                result.Append(JsonRoutines.ValueToString(kv.Value, format, indent));
+                result.Append(JsonRoutines.ValueToString(kv.Value, format, unquoted, indent));
             }
             if (format)
             {

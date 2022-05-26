@@ -61,12 +61,19 @@ public static partial class JsonRoutines
             return GetValueObject(data, ref pos);
         if (c == '[')
             return GetValueArray(data, ref pos);
-        if (c == 'n' && GetWord(data, ref pos) == "null")
-            return null;
-        if (c == 't' && GetWord(data, ref pos) == "true")
-            return true;
-        if (c == 'f' && GetWord(data, ref pos) == "false")
-            return false;
+        // look for any value starting with a letter or underline
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_')
+        {
+            string word = GetWord(data, ref pos);
+            if (word == "null")
+                return null;
+            if (word == "true")
+                return true;
+            if (word == "false")
+                return false;
+            // return string value that didn't have quotes
+            return word;
+        }
         throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {c}");
     }
 
@@ -76,7 +83,7 @@ public static partial class JsonRoutines
         while (pos < data.Length)
         {
             char c = data[pos];
-            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_')
             {
                 sb.Append(c);
                 pos++;

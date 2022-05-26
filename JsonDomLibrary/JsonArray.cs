@@ -57,15 +57,25 @@ public class JsonArray : List<object?>, IJsonClass
 
     public override string ToString()
     {
-        return ToString(false, 0);
+        return ToString(false, false, 0);
     }
 
     public string ToString(bool format)
     {
-        return ToString(format, 0);
+        return ToString(format, false, 0);
+    }
+
+    public string ToString(bool format, bool unquoted)
+    {
+        return ToString(format, unquoted, 0);
     }
 
     public string ToString(bool format, int indent)
+    {
+        return ToString(format, false, indent);
+    }
+
+    public string ToString(bool format, bool unquoted, int indent)
     {
         StringBuilder result = new();
         result.Append('[');
@@ -91,7 +101,7 @@ public class JsonArray : List<object?>, IJsonClass
                 }
                 else
                     comma = true;
-                result.Append(JsonRoutines.ValueToString(value, format, indent));
+                result.Append(JsonRoutines.ValueToString(value, format, unquoted, indent));
             }
             if (format)
             {

@@ -4,10 +4,10 @@ public static partial class JsonRoutines
 {
     public static string? ValueToString(object? value)
     {
-        return ValueToString(value, false, 0);
+        return ValueToString(value, false, false, 0);
     }
 
-    public static string? ValueToString(object? value, bool format, int indent)
+    public static string? ValueToString(object? value, bool format, bool unquoted, int indent)
     {
         if (value == null)
             return "null";
@@ -16,12 +16,35 @@ public static partial class JsonRoutines
             return value.ToString()!.ToLower();
         if (type == typeof(string))
         {
+            if (unquoted && IsValidUnquotedString((string)value))
+            {
+                return (string)value;
+            }
             return $"\"{ToJsonString((string)value)}\"";
         }
         // handle JsonArray, JsonObject, and any derived types
         if (value is IJsonClass @class)
             return @class.ToString(format, indent);
         return value.ToString();
+    }
+
+    private static bool IsValidUnquotedString(string value)
+    {
+        // look for a string which can be unquoted
+        char c = value[0];
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_'))
+        {
+            foreach (char c1 in value)
+            {
+                if (c1 >= 'a' && c1 <= 'z') continue;
+                if (c1 >= 'A' && c1 <= 'Z') continue;
+                if (c1 >= '0' && c1 <= '9') continue;
+                if (c1 == '_') continue;
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     #region private

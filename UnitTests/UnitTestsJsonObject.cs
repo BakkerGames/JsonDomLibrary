@@ -204,6 +204,16 @@ public class UnitTestJsonObject
     }
 
     [Fact]
+    public void Test_JsonObject_ToString_String_Unquoted()
+    {
+        JsonObject jo = new();
+        jo["abc"] = "def";
+        var expected = "{abc:def}";
+        var actual = jo.ToString(false, true);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void Test_JsonObject_ToString_JsonObject_Empty()
     {
         JsonObject jo = new();
