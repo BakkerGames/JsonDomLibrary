@@ -67,7 +67,7 @@ public static partial class JsonRoutines
         if (c == '[')
             return GetValueArray(data, ref pos);
         // look for any value starting with a letter or underline
-        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_')
+        if (char.IsLetter(c) || c == '_')
         {
             string word = GetWord(data, ref pos);
             if (word == "null")
@@ -88,7 +88,7 @@ public static partial class JsonRoutines
         while (pos < data.Length)
         {
             char c = data[pos];
-            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_')
+            if (char.IsLetterOrDigit(c) || c == '_')
             {
                 sb.Append(c);
                 pos++;
@@ -149,13 +149,8 @@ public static partial class JsonRoutines
                 lastSlash = true;
                 continue;
             }
-            if (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f' || c == '\b')
+            if (char.IsWhiteSpace(c))
             {
-                continue;
-            }
-            if (c == '\u2028' || c == '\u2029')
-            {
-                // allow U+2028 LINE SEPARATOR or U+2029 PARAGRAPH SEPARATOR as whitespace
                 continue;
             }
             pos--;

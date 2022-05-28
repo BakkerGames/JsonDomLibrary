@@ -102,7 +102,6 @@ public class UnitTestJsonObject
         Assert.Equal(expected, actual);
     }
 
-
     [Fact]
     public void Test_JsonObject_ToString_True()
     {
@@ -112,7 +111,6 @@ public class UnitTestJsonObject
         var actual = jo.ToString();
         Assert.Equal(expected, actual);
     }
-
 
     [Fact]
     public void Test_JsonObject_ToString_False()

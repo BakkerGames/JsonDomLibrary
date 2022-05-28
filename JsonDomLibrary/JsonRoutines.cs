@@ -30,21 +30,23 @@ public static partial class JsonRoutines
 
     private static bool IsValidUnquotedString(string value)
     {
+        // these always have to be quoted
+        if (value == "null" || value == "true" || value == "false")
+            return false;
         // look for a string which can be unquoted
-        char c = value[0];
-        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_'))
+        bool first = true;
+        foreach (char c in value)
         {
-            foreach (char c1 in value)
+            if (first)
             {
-                if (c1 >= 'a' && c1 <= 'z') continue;
-                if (c1 >= 'A' && c1 <= 'Z') continue;
-                if (c1 >= '0' && c1 <= '9') continue;
-                if (c1 == '_') continue;
-                return false;
+                if (!char.IsLetter(c) && c != '_')
+                    return false;
+                first = false;
             }
-            return true;
+            else if (!char.IsLetterOrDigit(c) && c != '_')
+                return false;
         }
-        return false;
+        return true;
     }
 
     #region private
