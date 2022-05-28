@@ -162,9 +162,40 @@ public class UnitTestsJsonArray
     [Fact]
     public void Test_JsonArray_Parse()
     {
-        var expected = "[null,true,false,123,\"abc\"]";
-        JsonArray ja = JsonArray.Parse(expected);
+        var initial = "[null,true,false,123,\"abc\"]";
+        var expected = initial;
+        JsonArray ja = JsonArray.Parse(initial);
         var actual = ja.ToString();
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonArray_Parse_IgnoreExtraCommas()
+    {
+        var initial = "[null,,,true,false,123,\"abc\",,]";
+        var expected = "[null,true,false,123,\"abc\"]";
+        JsonArray ja = JsonArray.Parse(initial);
+        var actual = ja.ToString();
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonArray_Parse_UnquotedStrings()
+    {
+        var initial = "[null,true,false,123,abc]";
+        var expected = initial;
+        JsonArray ja = JsonArray.Parse(initial);
+        var actual = ja.ToString(false, true);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonArray_Parse_FormattedUnquoted()
+    {
+        var initial = "[null,true,false,123,abc]";
+        var expected = "[\r\n  null,\r\n  true,\r\n  false,\r\n  123,\r\n  abc\r\n]";
+        JsonArray ja = JsonArray.Parse(initial);
+        var actual = ja.ToString(true, true);
         Assert.Equal(expected, actual);
     }
 }

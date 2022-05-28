@@ -8,7 +8,9 @@ public static partial class JsonRoutines
     {
         JsonObject result = new();
         SkipWhitespace(data, ref pos);
-        pos++;
+        if (data[pos] != '{')
+            throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {data[pos]}");
+        pos++; // skip initial {
         object? token = GetValue(data, ref pos);
         while (token?.ToString() != "}")
         {
@@ -17,10 +19,10 @@ public static partial class JsonRoutines
             object? value = GetValue(data, ref pos);
             result[token?.ToString()] = value;
             token = GetValue(data, ref pos);
-            if (token?.ToString() == ",")
-                token = GetValue(data, ref pos);
-            else if (token?.ToString() != "}")
+            if (token?.ToString() != "," && token?.ToString() != "}")
                 throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {token}");
+            while (token?.ToString() == ",") // skips any extra/trailing commas
+                token = GetValue(data, ref pos);
         }
         return result;
     }
@@ -28,16 +30,19 @@ public static partial class JsonRoutines
     internal static JsonArray GetValueArray(string data, ref int pos)
     {
         JsonArray result = new();
-        pos++;
+        SkipWhitespace(data, ref pos);
+        if (data[pos] != '[')
+            throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {data[pos]}");
+        pos++; // skip initial [
         object? token = GetValue(data, ref pos);
         while (token?.ToString() != "]")
         {
             result.Add(token);
             token = GetValue(data, ref pos);
-            if (token?.ToString() == ",")
-                token = GetValue(data, ref pos);
-            else if (token?.ToString() != "]")
+            if (token?.ToString() != "," && token?.ToString() != "]")
                 throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {token}");
+            while (token?.ToString() == ",") // skips any extra/trailing commas
+                token = GetValue(data, ref pos);
         }
         return result;
     }
@@ -146,6 +151,11 @@ public static partial class JsonRoutines
             }
             if (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f' || c == '\b')
             {
+                continue;
+            }
+            if (c == '\u2028' || c == '\u2029')
+            {
+                // allow U+2028 LINE SEPARATOR or U+2029 PARAGRAPH SEPARATOR as whitespace
                 continue;
             }
             pos--;

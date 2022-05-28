@@ -164,7 +164,6 @@ public class UnitTestJsonObject
         Assert.Equal(expected, actual);
     }
 
-
     [Fact]
     public void Test_JsonObject_Parse_Decimal_NoLeadingZeroNegative()
     {
@@ -173,6 +172,7 @@ public class UnitTestJsonObject
         var actual = jo.ToString();
         Assert.Equal(expected, actual);
     }
+
     [Fact]
     public void Test_JsonObject_ToString_String()
     {
@@ -370,10 +370,13 @@ public class UnitTestJsonObject
     }
 
     [Fact]
-    public void Test_JsonObject_Parse_ErrorExtraCommas()
+    public void Test_JsonObject_Parse_IgnoreExtraCommas()
     {
-        var initial = "{\"key1\":1,,,\"key2\":2}";
-        Assert.ThrowsAny<System.Exception>(() => { JsonObject.Parse(initial); });
+        var initial = "{\"key1\":1,,,\"key2\":2,,}";
+        JsonObject jo = JsonObject.Parse(initial);
+        var expected = "{\"key1\":1,\"key2\":2}";
+        var actual = jo.ToString();
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
