@@ -6,13 +6,15 @@ public class JsonObject : Dictionary<string, object?>, IJsonClass
     {
     }
 
+    public bool AllowPaths { get; set; } = false;
+
     public new object? this[string key]
     {
         get
         {
             if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentNullException(nameof(key));
-            if (key.StartsWith("$."))
+            if (AllowPaths && key.StartsWith("$."))
                 return GetFromPath(key);
             if (ContainsKey(key))
                 return base[key];
@@ -22,7 +24,7 @@ public class JsonObject : Dictionary<string, object?>, IJsonClass
         {
             if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentNullException(nameof(key));
-            if (key.StartsWith("$."))
+            if (AllowPaths && key.StartsWith("$."))
                 SetFromPath(key, value);
             else if (ContainsKey(key))
                 base[key] = value;
@@ -75,7 +77,7 @@ public class JsonObject : Dictionary<string, object?>, IJsonClass
     {
         if (string.IsNullOrWhiteSpace(key))
             throw new ArgumentNullException(nameof(key));
-        if (key.StartsWith("$."))
+        if (AllowPaths && key.StartsWith("$."))
             return RemoveFromPath(key);
         if (ContainsKey(key))
             return base.Remove(key);

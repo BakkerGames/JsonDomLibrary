@@ -25,6 +25,7 @@ public static partial class JsonRoutines
         // handle JsonArray, JsonObject, and any derived types
         if (value is IJsonClass @class)
             return @class.ToString(format, indent);
+        // number or some unknown type
         return value.ToString();
     }
 

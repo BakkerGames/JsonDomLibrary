@@ -12,6 +12,8 @@ public static partial class JsonRoutines
             throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {data[pos]}");
         pos++; // skip initial {
         object? token = GetValue(data, ref pos);
+        while (token?.ToString() == ",") // skip any leading commas
+            token = GetValue(data, ref pos);
         while (token?.ToString() != "}")
         {
             if (GetValue(data, ref pos)?.ToString() != ":")
@@ -21,7 +23,7 @@ public static partial class JsonRoutines
             token = GetValue(data, ref pos);
             if (token?.ToString() != "," && token?.ToString() != "}")
                 throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {token}");
-            while (token?.ToString() == ",") // skips any extra/trailing commas
+            while (token?.ToString() == ",") // skip any extra/trailing commas
                 token = GetValue(data, ref pos);
         }
         return result;
@@ -35,13 +37,15 @@ public static partial class JsonRoutines
             throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {data[pos]}");
         pos++; // skip initial [
         object? token = GetValue(data, ref pos);
+        while (token?.ToString() == ",") // skip any leading commas
+            token = GetValue(data, ref pos);
         while (token?.ToString() != "]")
         {
             result.Add(token);
             token = GetValue(data, ref pos);
             if (token?.ToString() != "," && token?.ToString() != "]")
                 throw new ArgumentException($"{INVALID_JSON} - pos:{pos} - {token}");
-            while (token?.ToString() == ",") // skips any extra/trailing commas
+            while (token?.ToString() == ",") // skip any extra/trailing commas
                 token = GetValue(data, ref pos);
         }
         return result;
@@ -180,7 +184,10 @@ public static partial class JsonRoutines
                         string value = $"{data[pos++]}{data[pos++]}{data[pos++]}{data[pos++]}";
                         sb.Append((char)uint.Parse(value, System.Globalization.NumberStyles.AllowHexSpecifier));
                         break;
-                    default: sb.Append(c); break;
+                    default:
+                        // just append the character and don't throw an error
+                        sb.Append(c);
+                        break;
                 }
             }
             else if (c == '\\')

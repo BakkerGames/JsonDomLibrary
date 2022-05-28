@@ -42,7 +42,7 @@ public class UnitTestJsonObject
     [Fact]
     public void Test_JsonObject_GetPath_JsonArray()
     {
-        JsonObject jo1 = new();
+        JsonObject jo1 = new() { AllowPaths = true };
         JsonArray ja2 = new();
         JsonObject jo3 = new();
         jo3["level3"] = 123;
@@ -236,7 +236,7 @@ public class UnitTestJsonObject
     [Fact]
     public void Test_JsonObject_ToString_JsonObject_Path()
     {
-        JsonObject jo = new();
+        JsonObject jo = new() { AllowPaths = true };
         jo["$.abc.def.ghi"] = 123;
         var expected = "{\"abc\":{\"def\":{\"ghi\":123}}}";
         var actual = jo.ToString();
@@ -246,7 +246,7 @@ public class UnitTestJsonObject
     [Fact]
     public void Test_JsonObject_ToStringFormatted()
     {
-        JsonObject jo = new();
+        JsonObject jo = new() { AllowPaths = true };
         jo["$.abc.def.ghi"] = 123;
         jo["$.abc.def.xyz"] = new JsonObject();
         var expected = "{\r\n  \"abc\": {\r\n    \"def\": {\r\n      \"ghi\": 123,\r\n      \"xyz\": {}\r\n    }\r\n  }\r\n}";
@@ -270,7 +270,7 @@ public class UnitTestJsonObject
     [Fact]
     public void Test_JsonObject_Remove_JsonObject_Path()
     {
-        JsonObject jo = new();
+        JsonObject jo = new() { AllowPaths = true };
         jo["$.abc.def.ghi"] = 123;
         jo.Remove("$.abc.def.ghi");
         var expected = "{\"abc\":{\"def\":{}}}";
@@ -303,7 +303,7 @@ public class UnitTestJsonObject
     [Fact]
     public void Test_JsonObject_Format()
     {
-        JsonObject jo = new();
+        JsonObject jo = new() { AllowPaths = true };
         jo["$.abc.def.ghi"] = 123;
         var expected = "{\r\n  \"abc\": {\r\n    \"def\": {\r\n      \"ghi\": 123\r\n    }\r\n  }\r\n}";
         var actual = jo.ToString(true);
@@ -370,7 +370,7 @@ public class UnitTestJsonObject
     [Fact]
     public void Test_JsonObject_Parse_IgnoreExtraCommas()
     {
-        var initial = "{\"key1\":1,,,\"key2\":2,,}";
+        var initial = "{,,\"key1\":1,,,\"key2\":2,,}";
         JsonObject jo = JsonObject.Parse(initial);
         var expected = "{\"key1\":1,\"key2\":2}";
         var actual = jo.ToString();
