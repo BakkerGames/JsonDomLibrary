@@ -64,7 +64,7 @@ public static partial class JsonRoutines
         }
         if (c == '"')
             return GetValueString(data, ref pos);
-        if ((c >= '0' && c <= '9') || c == '-' || c == '.')
+        if (char.IsDigit(c) || c == '-' || c == '.')
             return GetValueNumber(data, ref pos);
         if (c == '{')
             return GetValueObject(data, ref pos);
@@ -206,7 +206,7 @@ public static partial class JsonRoutines
         while (pos < data.Length)
         {
             c = data[pos];
-            if ((c >= '0' && c <= '9') || c == '.' || c == '-' || c == 'e' || c == 'E')
+            if (char.IsDigit(c) || c == '.' || c == '-' || c == 'e' || c == 'E')
             {
                 sb.Append(c);
                 pos++;
