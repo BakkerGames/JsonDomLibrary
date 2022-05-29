@@ -1,50 +1,96 @@
 ﻿namespace JsonDomLibrary;
 
 [Serializable()]
-public class JsonArray : List<object?>, IJsonClass
+public partial class JsonArray : List<object?>, IJsonClass
 {
-    public JsonArray()
+    public object? this[params int[] indexes]
     {
+        get
+        {
+            if (indexes.Length == 0)
+                return null;
+            if (indexes[0] < 0)
+                throw new ArgumentOutOfRangeException(nameof(indexes), indexes[0].ToString());
+            if (indexes.Length == 1)
+            {
+                if (indexes[0] < Count)
+                    return base[indexes[0]];
+                return null;
+            }
+            JsonArray? ja = (JsonArray?)base[indexes[0]];
+            if (ja == null) return null;
+            List<int> newIndexes = indexes.ToList();
+            newIndexes.RemoveAt(0);
+            return ja[newIndexes.ToArray()];
+        }
+        set
+        {
+            if (indexes.Length == 0)
+                return;
+            if (indexes[0] < 0)
+                throw new ArgumentOutOfRangeException(nameof(indexes), indexes[0].ToString());
+            if (indexes.Length == 1)
+            {
+                if (indexes[0] < Count)
+                    base[indexes[0]] = value;
+                else
+                {
+                    while (Count < indexes[0])
+                        Add(null);
+                    Add(value);
+                }
+                return;
+            }
+            JsonArray? ja = (JsonArray?)base[indexes[0]];
+            if (ja == null)
+            {
+                ja = new();
+                base[indexes[0]] = ja;
+            }
+            List<int> newIndexes = indexes.ToList();
+            newIndexes.RemoveAt(0);
+            ja[newIndexes.ToArray()] = value;
+        }
     }
 
-    public JsonArray GetJsonArray(int index)
+    public bool? GetBool(params int[] indexes)
     {
-        return (JsonArray)(this[index] ?? new JsonArray());
+        return (bool?)this[indexes];
     }
 
-    public JsonObject GetJsonObject(int index)
+    public string? GetString(params int[] indexes)
     {
-        return (JsonObject)(this[index] ?? new JsonObject());
+        return (string?)this[indexes];
     }
 
-    public bool? GetBool(int index)
+    public int? GetInt(params int[] indexes)
     {
-        return (bool?)this[index];
+        return (int?)this[indexes];
     }
 
-    public string? GetString(int index)
+    public long? GetLong(params int[] indexes)
     {
-        return (string?)this[index];
+        return (long?)this[indexes];
     }
 
-    public int? GetInt(int index)
+    public double? GetDouble(params int[] indexes)
     {
-        return (int?)this[index];
+        return (double?)this[indexes];
     }
 
-    public long? GetLong(int index)
+    public decimal? GetDecimal(params int[] indexes)
     {
-        return (long?)this[index];
+        return (decimal?)this[indexes];
     }
 
-    public double? GetDouble(int index)
+    public JsonArray? GetJsonArray(params int[] indexes)
     {
-        return (double?)this[index];
+        return (JsonArray?)this[indexes];
     }
 
-    public decimal? GetDecimal(int index)
+    public JsonObject? GetJsonObject(params int[] indexes)
     {
-        return (decimal?)this[index];
+        return (JsonObject?)this[indexes];
     }
 
     public static JsonArray FromList(IEnumerable list)
@@ -53,65 +99,6 @@ public class JsonArray : List<object?>, IJsonClass
         foreach (object obj in list)
             result.Add(obj);
         return result;
-    }
-
-    public override string ToString()
-    {
-        return ToString(false, false, 0);
-    }
-
-    public string ToString(bool format)
-    {
-        return ToString(format, false, 0);
-    }
-
-    public string ToString(bool format, bool unquoted)
-    {
-        return ToString(format, unquoted, 0);
-    }
-
-    public string ToString(bool format, int indent)
-    {
-        return ToString(format, false, indent);
-    }
-
-    public string ToString(bool format, bool unquoted, int indent)
-    {
-        StringBuilder result = new();
-        result.Append('[');
-        if (Count > 0)
-        {
-            if (format)
-            {
-                indent++;
-                result.AppendLine();
-                result.Append(new string(' ', indent * 2));
-            }
-            bool comma = false;
-            foreach (var value in this)
-            {
-                if (comma)
-                {
-                    result.Append(',');
-                    if (format)
-                    {
-                        result.AppendLine();
-                        result.Append(new string(' ', indent * 2));
-                    }
-                }
-                else
-                    comma = true;
-                result.Append(JsonRoutines.ValueToString(value, format, unquoted, indent));
-            }
-            if (format)
-            {
-                indent--;
-                result.AppendLine();
-                result.Append(new string(' ', indent * 2));
-            }
-        }
-        result.Append(']');
-        return result.ToString();
     }
 
     public static JsonArray Parse(string data)

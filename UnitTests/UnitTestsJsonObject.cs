@@ -35,14 +35,14 @@ public class UnitTestJsonObject
     public void Test_JsonObject_GetPath_Null()
     {
         JsonObject jo = new();
-        var value = jo["$.level1.level2.level3"];
+        var value = jo.GetFromPath("$.level1.level2.level3");
         Assert.Null(value);
     }
 
     [Fact]
     public void Test_JsonObject_GetPath_JsonArray()
     {
-        JsonObject jo1 = new() { AllowPaths = true };
+        JsonObject jo1 = new();
         JsonArray ja2 = new();
         JsonObject jo3 = new();
         jo3["level3"] = 123;
@@ -50,7 +50,7 @@ public class UnitTestJsonObject
         ja2.Add(null);
         ja2.Add(jo3);
         jo1["level1"] = ja2;
-        var value = jo1["$.level1.2.level3"];
+        var value = jo1.GetFromPath("$.level1.2.level3");
         Assert.Equal(123, value);
     }
 
@@ -65,8 +65,8 @@ public class UnitTestJsonObject
         ja2.Add(null);
         ja2.Add(jo3);
         jo1["level1"] = ja2;
-        jo1["$.level1.2.level3"] = 123;
-        var value = jo1["$.level1.2.level3"];
+        jo1.SetFromPath("$.level1.2.level3", 123);
+        var value = jo1.GetFromPath("$.level1.2.level3");
         Assert.Equal(123, value);
     }
 
@@ -76,8 +76,8 @@ public class UnitTestJsonObject
         JsonObject jo = new();
         var path = "$.\"level 1\".\"level.2\".\"  level3  \"";
         var origValue = "ABC";
-        jo[path] = origValue;
-        var newValue = jo[path];
+        jo.SetFromPath(path, origValue);
+        var newValue = jo.GetFromPath(path);
         Assert.Equal(origValue, newValue);
     }
 
@@ -87,8 +87,8 @@ public class UnitTestJsonObject
         JsonObject jo = new();
         var path = "$.level1.level2.level3";
         var origValue = "ABC";
-        jo[path] = origValue;
-        var newValue = jo[path];
+        jo.SetFromPath(path, origValue);
+        var newValue = jo.GetFromPath(path);
         Assert.Equal(origValue, newValue);
     }
 
@@ -236,8 +236,8 @@ public class UnitTestJsonObject
     [Fact]
     public void Test_JsonObject_ToString_JsonObject_Path()
     {
-        JsonObject jo = new() { AllowPaths = true };
-        jo["$.abc.def.ghi"] = 123;
+        JsonObject jo = new();
+        jo.SetFromPath("$.abc.def.ghi", 123);
         var expected = "{\"abc\":{\"def\":{\"ghi\":123}}}";
         var actual = jo.ToString();
         Assert.Equal(expected, actual);
@@ -246,9 +246,9 @@ public class UnitTestJsonObject
     [Fact]
     public void Test_JsonObject_ToStringFormatted()
     {
-        JsonObject jo = new() { AllowPaths = true };
-        jo["$.abc.def.ghi"] = 123;
-        jo["$.abc.def.xyz"] = new JsonObject();
+        JsonObject jo = new();
+        jo.SetFromPath("$.abc.def.ghi", 123);
+        jo.SetFromPath("$.abc.def.xyz", new JsonObject());
         var expected = "{\r\n  \"abc\": {\r\n    \"def\": {\r\n      \"ghi\": 123,\r\n      \"xyz\": {}\r\n    }\r\n  }\r\n}";
         var actual = jo.ToString(true);
         Assert.Equal(expected, actual);
@@ -270,9 +270,9 @@ public class UnitTestJsonObject
     [Fact]
     public void Test_JsonObject_Remove_JsonObject_Path()
     {
-        JsonObject jo = new() { AllowPaths = true };
-        jo["$.abc.def.ghi"] = 123;
-        jo.Remove("$.abc.def.ghi");
+        JsonObject jo = new();
+        jo.SetFromPath("$.abc.def.ghi", 123);
+        jo.RemoveFromPath("$.abc.def.ghi");
         var expected = "{\"abc\":{\"def\":{}}}";
         var actual = jo.ToString();
         Assert.Equal(expected, actual);
@@ -303,8 +303,8 @@ public class UnitTestJsonObject
     [Fact]
     public void Test_JsonObject_Format()
     {
-        JsonObject jo = new() { AllowPaths = true };
-        jo["$.abc.def.ghi"] = 123;
+        JsonObject jo = new();
+        jo.SetFromPath("$.abc.def.ghi", 123);
         var expected = "{\r\n  \"abc\": {\r\n    \"def\": {\r\n      \"ghi\": 123\r\n    }\r\n  }\r\n}";
         var actual = jo.ToString(true);
         Assert.Equal(expected, actual);
