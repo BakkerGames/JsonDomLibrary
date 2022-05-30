@@ -198,4 +198,14 @@ public class UnitTestsJsonArray
         var actual = ja.ToString(true, true);
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void Test_JsonArray_Params()
+    {
+        JsonArray ja = new();
+        ja[1, 2, 3] = 123;
+        var expected = "[null,[null,null,[null,null,null,123]]]";
+        var actual = ja.ToString();
+        Assert.Equal(expected, actual);
+    }
 }

@@ -17,7 +17,7 @@ public partial class JsonArray : List<object?>, IJsonClass
                     return base[indexes[0]];
                 return null;
             }
-            JsonArray? ja = (JsonArray?)base[indexes[0]];
+            JsonArray? ja = (JsonArray?)this[indexes[0]]; // this[] can return null
             if (ja == null) return null;
             List<int> newIndexes = indexes.ToList();
             newIndexes.RemoveAt(0);
@@ -41,9 +41,11 @@ public partial class JsonArray : List<object?>, IJsonClass
                 }
                 return;
             }
-            JsonArray? ja = (JsonArray?)base[indexes[0]];
+            JsonArray? ja = (JsonArray?)this[indexes[0]]; // this[] can return null
             if (ja == null)
             {
+                while (Count <= indexes[0])
+                    Add(null);
                 ja = new();
                 base[indexes[0]] = ja;
             }

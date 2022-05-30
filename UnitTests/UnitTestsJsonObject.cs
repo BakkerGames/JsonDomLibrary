@@ -32,67 +32,6 @@ public class UnitTestJsonObject
     }
 
     [Fact]
-    public void Test_JsonObject_GetPath_Null()
-    {
-        JsonObject jo = new();
-        var value = jo.GetFromPath("$.level1.level2.level3");
-        Assert.Null(value);
-    }
-
-    [Fact]
-    public void Test_JsonObject_GetPath_JsonArray()
-    {
-        JsonObject jo1 = new();
-        JsonArray ja2 = new();
-        JsonObject jo3 = new();
-        jo3["level3"] = 123;
-        ja2.Add(null);
-        ja2.Add(null);
-        ja2.Add(jo3);
-        jo1["level1"] = ja2;
-        var value = jo1.GetFromPath("$.level1.2.level3");
-        Assert.Equal(123, value);
-    }
-
-    [Fact]
-    public void Test_JsonObject_SetPath_JsonArray()
-    {
-        JsonObject jo1 = new();
-        JsonArray ja2 = new();
-        JsonObject jo3 = new();
-        jo3["level3"] = null;
-        ja2.Add(null);
-        ja2.Add(null);
-        ja2.Add(jo3);
-        jo1["level1"] = ja2;
-        jo1.SetFromPath("$.level1.2.level3", 123);
-        var value = jo1.GetFromPath("$.level1.2.level3");
-        Assert.Equal(123, value);
-    }
-
-    [Fact]
-    public void Test_JsonObject_SetPathGetPathEscaped_Value()
-    {
-        JsonObject jo = new();
-        var path = "$.\"level 1\".\"level.2\".\"  level3  \"";
-        var origValue = "ABC";
-        jo.SetFromPath(path, origValue);
-        var newValue = jo.GetFromPath(path);
-        Assert.Equal(origValue, newValue);
-    }
-
-    [Fact]
-    public void Test_JsonObject_SetPathGetPath_Value()
-    {
-        JsonObject jo = new();
-        var path = "$.level1.level2.level3";
-        var origValue = "ABC";
-        jo.SetFromPath(path, origValue);
-        var newValue = jo.GetFromPath(path);
-        Assert.Equal(origValue, newValue);
-    }
-
-    [Fact]
     public void Test_JsonObject_ToString_Null()
     {
         JsonObject jo = new();
@@ -234,21 +173,11 @@ public class UnitTestJsonObject
     }
 
     [Fact]
-    public void Test_JsonObject_ToString_JsonObject_Path()
-    {
-        JsonObject jo = new();
-        jo.SetFromPath("$.abc.def.ghi", 123);
-        var expected = "{\"abc\":{\"def\":{\"ghi\":123}}}";
-        var actual = jo.ToString();
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
     public void Test_JsonObject_ToStringFormatted()
     {
         JsonObject jo = new();
-        jo.SetFromPath("$.abc.def.ghi", 123);
-        jo.SetFromPath("$.abc.def.xyz", new JsonObject());
+        jo["abc", "def", "ghi"] = 123;
+        jo["abc", "def", "xyz"] = new JsonObject();
         var expected = "{\r\n  \"abc\": {\r\n    \"def\": {\r\n      \"ghi\": 123,\r\n      \"xyz\": {}\r\n    }\r\n  }\r\n}";
         var actual = jo.ToString(true);
         Assert.Equal(expected, actual);
@@ -263,17 +192,6 @@ public class UnitTestJsonObject
         jo["ghi"] = 789;
         jo.Remove("def");
         var expected = "{\"abc\":123,\"ghi\":789}";
-        var actual = jo.ToString();
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void Test_JsonObject_Remove_JsonObject_Path()
-    {
-        JsonObject jo = new();
-        jo.SetFromPath("$.abc.def.ghi", 123);
-        jo.RemoveFromPath("$.abc.def.ghi");
-        var expected = "{\"abc\":{\"def\":{}}}";
         var actual = jo.ToString();
         Assert.Equal(expected, actual);
     }
@@ -304,7 +222,7 @@ public class UnitTestJsonObject
     public void Test_JsonObject_Format()
     {
         JsonObject jo = new();
-        jo.SetFromPath("$.abc.def.ghi", 123);
+        jo["abc", "def", "ghi"] = 123;
         var expected = "{\r\n  \"abc\": {\r\n    \"def\": {\r\n      \"ghi\": 123\r\n    }\r\n  }\r\n}";
         var actual = jo.ToString(true);
         Assert.Equal(expected, actual);
@@ -316,7 +234,7 @@ public class UnitTestJsonObject
         JsonObject jo = new();
         jo["abc"] = 123;
         jo["list"] = new JsonArray();
-        ((JsonArray?)jo["list"])?.Add("xyz");
+        jo.GetJsonArray("list")?.Add("xyz");
         var expected = "{\"abc\":123,\"list\":[\"xyz\"]}";
         var actual = jo.ToString();
         Assert.Equal(expected, actual);
@@ -389,5 +307,26 @@ public class UnitTestJsonObject
     {
         var initial = "{\"key1\",\"key2\"}";
         Assert.ThrowsAny<System.Exception>(() => { JsonObject.Parse(initial); });
+    }
+
+    [Fact]
+    public void Test_JsonObject_Params_Set()
+    {
+        JsonObject jo = new();
+        jo["a", "b", "c"] = "abc";
+        var expected = "{\"a\":{\"b\":{\"c\":\"abc\"}}}";
+        var actual = jo.ToString();
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_Params_Get()
+    {
+        JsonObject jo = new();
+        var initial = "abc";
+        jo["a", "b", "c"] = initial;
+        var expected = initial;
+        var actual = jo["a", "b", "c"];
+        Assert.Equal(expected, actual);
     }
 }

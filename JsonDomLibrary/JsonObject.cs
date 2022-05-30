@@ -16,7 +16,7 @@ public partial class JsonObject : Dictionary<string, object?>, IJsonClass
                     return base[keys[0]];
                 return null;
             }
-            JsonObject? jo = (JsonObject?)base[keys[0]];
+            JsonObject? jo = (JsonObject?)this[keys[0]]; // this[] can return null
             if (jo == null) return null;
             List<string> newKeys = keys.ToList();
             newKeys.RemoveAt(0);
@@ -36,7 +36,7 @@ public partial class JsonObject : Dictionary<string, object?>, IJsonClass
                     Add(keys[0], value);
                 return;
             }
-            JsonObject? jo = (JsonObject?)base[keys[0]];
+            JsonObject? jo = (JsonObject?)this[keys[0]]; // this[] can return null
             if (jo == null) {
                 jo = new();
                 base[keys[0]] = jo;
