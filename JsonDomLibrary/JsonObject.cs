@@ -37,7 +37,8 @@ public partial class JsonObject : Dictionary<string, object?>, IJsonClass
                 return;
             }
             JsonObject? jo = (JsonObject?)this[keys[0]]; // this[] can return null
-            if (jo == null) {
+            if (jo == null)
+            {
                 jo = new();
                 base[keys[0]] = jo;
             }
@@ -45,6 +46,33 @@ public partial class JsonObject : Dictionary<string, object?>, IJsonClass
             newKeys.RemoveAt(0);
             jo[newKeys.ToArray()] = value;
         }
+    }
+
+    public void Rename(string fromKey, string toKey)
+    {
+        if (string.IsNullOrEmpty(fromKey))
+        {
+            throw new ArgumentNullException(nameof(fromKey));
+        }
+        if (string.IsNullOrEmpty(toKey))
+        {
+            throw new ArgumentNullException(nameof(toKey));
+        }
+        if (fromKey == toKey)
+        {
+            throw new ArgumentException("Keys cannot match");
+        }
+        if (!ContainsKey(fromKey))
+        {
+            throw new ArgumentException($"Key not found: {fromKey}");
+        }
+        if (ContainsKey(toKey))
+        {
+            throw new ArgumentException($"Key already exists: {toKey}");
+        }
+        var value = this[fromKey];
+        this[toKey] = value;
+        Remove(fromKey);
     }
 
     public bool? GetBool(params string[] keys)
