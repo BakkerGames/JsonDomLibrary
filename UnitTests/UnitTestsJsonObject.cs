@@ -329,4 +329,44 @@ public class UnitTestJsonObject
         var actual = jo["a", "b", "c"];
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void Test_JsonObject_GetInt()
+    {
+        int? expected = 0;
+        string initial = $"{{\"key\":{expected}}}";
+        JsonObject jo = JsonObject.Parse(initial);
+        var actual = jo.GetInt("key");
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_GetLong()
+    {
+        long? expected = 0;
+        string initial = $"{{\"key\":{expected}}}";
+        JsonObject jo = JsonObject.Parse(initial);
+        var actual = jo.GetLong("key");
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_GetDouble()
+    {
+        double? expected = 0;
+        string initial = $"{{\"key\":{expected}}}";
+        JsonObject jo = JsonObject.Parse(initial);
+        var actual = jo.GetDouble("key");
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_GetDecimal()
+    {
+        decimal? expected = 0;
+        string initial = $"{{\"key\":{expected}}}";
+        JsonObject jo = JsonObject.Parse(initial);
+        var actual = jo.GetDecimal("key");
+        Assert.Equal(expected, actual);
+    }
 }

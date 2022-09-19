@@ -87,22 +87,30 @@ public partial class JsonObject : Dictionary<string, object?>, IJsonClass
 
     public int? GetInt(params string[] keys)
     {
-        return (int?)this[keys];
+        var value = this[keys];
+        if (value == null) return null;
+        return int.Parse(value.ToString());
     }
 
     public long? GetLong(params string[] keys)
     {
-        return (long?)this[keys];
+        var value = this[keys];
+        if (value == null) return null;
+        return long.Parse(value.ToString());
     }
 
     public double? GetDouble(params string[] keys)
     {
-        return (double?)this[keys];
+        var value = this[keys];
+        if (value == null) return null;
+        return double.Parse(value.ToString());
     }
 
     public decimal? GetDecimal(params string[] keys)
     {
-        return (decimal?)this[keys];
+        var value = this[keys];
+        if (value == null) return null;
+        return decimal.Parse(value.ToString());
     }
 
     public JsonArray? GetJsonArray(params string[] keys)

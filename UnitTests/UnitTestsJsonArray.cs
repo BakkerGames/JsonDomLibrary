@@ -208,4 +208,44 @@ public class UnitTestsJsonArray
         var actual = ja.ToString();
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void Test_JsonArray_GetInt()
+    {
+        int? expected = 0;
+        string initial = $"[{expected}]";
+        JsonArray ja = JsonArray.Parse(initial);
+        var actual = ja.GetInt(0);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonArray_GetLong()
+    {
+        long? expected = 0;
+        string initial = $"[{expected}]";
+        JsonArray ja = JsonArray.Parse(initial);
+        var actual = ja.GetLong(0);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonArray_GetDouble()
+    {
+        double? expected = 0;
+        string initial = $"[{expected}]";
+        JsonArray ja = JsonArray.Parse(initial);
+        var actual = ja.GetDouble(0);
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonArray_GetDecimal()
+    {
+        decimal? expected = 0;
+        string initial = $"[{expected}]";
+        JsonArray ja = JsonArray.Parse(initial);
+        var actual = ja.GetDecimal(0);
+        Assert.Equal(expected, actual);
+    }
 }

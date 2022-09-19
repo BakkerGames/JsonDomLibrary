@@ -67,22 +67,30 @@ public partial class JsonArray : List<object?>, IJsonClass
 
     public int? GetInt(params int[] indexes)
     {
-        return (int?)this[indexes];
+        var value = this[indexes];
+        if (value == null) return null;
+        return int.Parse(value.ToString());
     }
 
     public long? GetLong(params int[] indexes)
     {
-        return (long?)this[indexes];
+        var value = this[indexes];
+        if (value == null) return null;
+        return long.Parse(value.ToString());
     }
 
     public double? GetDouble(params int[] indexes)
     {
-        return (double?)this[indexes];
+        var value = this[indexes];
+        if (value == null) return null;
+        return double.Parse(value.ToString());
     }
 
     public decimal? GetDecimal(params int[] indexes)
     {
-        return (decimal?)this[indexes];
+        var value = this[indexes];
+        if (value == null) return null;
+        return decimal.Parse(value.ToString());
     }
 
     public JsonArray? GetJsonArray(params int[] indexes)
