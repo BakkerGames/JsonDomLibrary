@@ -178,9 +178,33 @@ public class UnitTestJsonObject
         JsonObject jo = new();
         var filePath = @"C:\Temp\DataFile.txt";
         jo["path"] = filePath;
-        var expected = $"{{\"path\":\"{filePath}\"}}";
-        var actual = jo.ToString();
-        Assert.Equal(expected, actual);
+        JsonObject jo1 = JsonObject.Parse(jo.ToString());
+        string? actual = (string?)jo1["path"];
+        Assert.Equal(filePath, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_ToString_SpecialChars()
+    {
+        JsonObject jo = new();
+        var initial = "\b\t\n\f\r\u0021\\";
+        jo["key"] = initial;
+        string value = jo.ToString();
+        JsonObject jo1 = JsonObject.Parse(value);
+        string? actual = (string?)jo1["key"];
+        Assert.Equal(initial, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_ToString_MoreSpecialChars()
+    {
+        JsonObject jo = new();
+        var initial = "\a\v\u0000\uFFFF";
+        jo["key"] = initial;
+        string value = jo.ToString();
+        JsonObject jo1 = JsonObject.Parse(value);
+        string? actual = (string?)jo1["key"];
+        Assert.Equal(initial, actual);
     }
 
     [Fact]

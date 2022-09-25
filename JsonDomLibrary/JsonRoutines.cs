@@ -57,7 +57,7 @@ public static partial class JsonRoutines
         StringBuilder sb = new();
         foreach (char c in s)
         {
-            if (c == '"' || c == 8 || c == 9 || c == 10 || c == 12 || c == 13)
+            if (c == 8 || c == 9 || c == 10 || c == 12 || c == 13 || c == '"' || c == '\\')
             {
                 switch (c)
                 {
