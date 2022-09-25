@@ -4,7 +4,7 @@ public partial class JsonObject
 {
     public override string ToString()
     {
-        return ToString(false, 0);
+        return ToString(false, false, 0);
     }
 
     public string ToString(bool format)

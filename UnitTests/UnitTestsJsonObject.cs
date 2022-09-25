@@ -173,6 +173,17 @@ public class UnitTestJsonObject
     }
 
     [Fact]
+    public void Test_JsonObject_ToString_Filepath()
+    {
+        JsonObject jo = new();
+        var filePath = @"C:\Temp\DataFile.txt";
+        jo["path"] = filePath;
+        var expected = $"{{\"path\":\"{filePath}\"}}";
+        var actual = jo.ToString();
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void Test_JsonObject_ToStringFormatted()
     {
         JsonObject jo = new();

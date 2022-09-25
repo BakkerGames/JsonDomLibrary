@@ -55,15 +55,9 @@ public static partial class JsonRoutines
     internal static string ToJsonString(string s)
     {
         StringBuilder sb = new();
-        bool lastBackslash = false;
         foreach (char c in s)
         {
-            if (!lastBackslash && c == '\\')
-            {
-                lastBackslash = true;
-                continue;
-            }
-            if (c == '\\' || c == '"' || c == 8 || c == 9 || c == 10 || c == 12 || c == 13)
+            if (c == '"' || c == 8 || c == 9 || c == 10 || c == 12 || c == 13)
             {
                 switch (c)
                 {
@@ -91,15 +85,10 @@ public static partial class JsonRoutines
             {
                 sb.Append($"\\u{(int)c:x4}");
             }
-            else if (c == '"')
-            {
-                sb.Append("\\\"");
-            }
             else
             {
                 sb.Append(c);
             }
-            lastBackslash = false;
         }
         return sb.ToString();
     }
