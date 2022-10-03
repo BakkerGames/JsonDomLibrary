@@ -24,7 +24,30 @@ public static partial class JsonRoutines
         }
         // handle JsonArray, JsonObject, and any derived types
         if (value is IJsonClass @class)
+        {
             return @class.ToString(format, indent);
+        }
+        // check for dictionary
+        if (value is IDictionary dictionary)
+        {
+            JsonObject jo = new();
+            foreach (DictionaryEntry kv in dictionary)
+            {
+                // the key has to be converted to a string
+                jo.Add(kv.Key.ToString(), kv.Value);
+            }
+            return jo.ToString(format, unquoted, indent);
+        }
+        // check for any type of list
+        if (value is IEnumerable enumerable)
+        {
+            JsonArray ja = new();
+            foreach (object? o in enumerable)
+            {
+                ja.Add(o);
+            }
+            return ja.ToString(format, unquoted, indent);
+        }
         // number or some unknown type
         return value.ToString();
     }

@@ -1,4 +1,5 @@
 using JsonDomLibrary;
+using System.Collections.Generic;
 using Xunit;
 
 namespace JsonDomLibraryTests;
@@ -402,6 +403,46 @@ public class UnitTestJsonObject
         string initial = $"{{\"key\":{expected}}}";
         JsonObject jo = JsonObject.Parse(initial);
         var actual = jo.GetDecimal("key");
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_AddDictionary()
+    {
+        JsonObject jo = new();
+        Dictionary<object, object?> dict = new();
+        dict.Add("hello", "world");
+        dict.Add("null", null);
+        dict.Add("number", 23);
+        dict.Add(23, "number");
+        jo.Add("dict", dict);
+        var expected = "{\"dict\":{\"hello\":\"world\",\"null\":null,\"number\":23,\"23\":\"number\"}}";
+        var actual = jo.ToString();
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_AddList()
+    {
+        JsonObject jo = new();
+        List<object?> list = new();
+        list.Add("hello");
+        list.Add(null);
+        list.Add(23);
+        jo.Add("list", list);
+        var expected = "{\"list\":[\"hello\",null,23]}";
+        var actual = jo.ToString();
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Test_JsonObject_AddArray()
+    {
+        JsonObject jo = new();
+        int[] a = { 1, 2, 3 };
+        jo["array"] = a;
+        var expected = "{\"array\":[1,2,3]}";
+        var actual = jo.ToString();
         Assert.Equal(expected, actual);
     }
 }
