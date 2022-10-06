@@ -80,11 +80,12 @@ public static partial class JsonRoutines
         if (char.IsLetter(c) || c == '_')
         {
             string word = GetWord(data, ref pos);
-            if (word == "null")
+            // allow these ignoring case
+            if (word.ToLower() == "null")
                 return null;
-            if (word == "true")
+            if (word.ToLower() == "true")
                 return true;
-            if (word == "false")
+            if (word.ToLower() == "false")
                 return false;
             // return string value that didn't have quotes
             return word;

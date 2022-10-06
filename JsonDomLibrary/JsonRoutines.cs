@@ -54,8 +54,10 @@ public static partial class JsonRoutines
 
     private static bool IsValidUnquotedString(string value)
     {
-        // these always have to be quoted
-        if (value == "null" || value == "true" || value == "false")
+        // these always have to be quoted, ignore case
+        if (value.ToLower() == "null" ||
+            value.ToLower() == "true" ||
+            value.ToLower() == "false")
             return false;
         // look for a string which can be unquoted
         bool first = true;
