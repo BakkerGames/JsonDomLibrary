@@ -4,6 +4,12 @@ public static partial class JsonRoutines
 {
     private const string INVALID_JSON = "Invalid json";
 
+    public static object? Parse(string data)
+    {
+        int pos = 0;
+        return GetValue(data, ref pos);
+    }
+
     internal static JsonObject GetValueObject(string data, ref int pos)
     {
         JsonObject result = new();
