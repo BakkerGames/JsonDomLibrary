@@ -55,54 +55,6 @@ public partial class JsonArray : List<object?>, IJsonClass
         }
     }
 
-    public bool? GetBool(params int[] indexes)
-    {
-        return (bool?)this[indexes];
-    }
-
-    public string? GetString(params int[] indexes)
-    {
-        return (string?)this[indexes];
-    }
-
-    public int? GetInt(params int[] indexes)
-    {
-        var value = this[indexes];
-        if (value == null) return null;
-        return int.Parse(value.ToString());
-    }
-
-    public long? GetLong(params int[] indexes)
-    {
-        var value = this[indexes];
-        if (value == null) return null;
-        return long.Parse(value.ToString());
-    }
-
-    public double? GetDouble(params int[] indexes)
-    {
-        var value = this[indexes];
-        if (value == null) return null;
-        return double.Parse(value.ToString());
-    }
-
-    public decimal? GetDecimal(params int[] indexes)
-    {
-        var value = this[indexes];
-        if (value == null) return null;
-        return decimal.Parse(value.ToString());
-    }
-
-    public JsonArray? GetJsonArray(params int[] indexes)
-    {
-        return (JsonArray?)this[indexes];
-    }
-
-    public JsonObject? GetJsonObject(params int[] indexes)
-    {
-        return (JsonObject?)this[indexes];
-    }
-
     public static JsonArray FromList(IEnumerable list)
     {
         JsonArray result = new();

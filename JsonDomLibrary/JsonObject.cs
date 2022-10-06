@@ -75,54 +75,6 @@ public partial class JsonObject : Dictionary<string, object?>, IJsonClass
         Remove(fromKey);
     }
 
-    public bool? GetBool(params string[] keys)
-    {
-        return (bool?)this[keys];
-    }
-
-    public string? GetString(params string[] keys)
-    {
-        return (string?)this[keys];
-    }
-
-    public int? GetInt(params string[] keys)
-    {
-        var value = this[keys];
-        if (value == null) return null;
-        return int.Parse(value.ToString());
-    }
-
-    public long? GetLong(params string[] keys)
-    {
-        var value = this[keys];
-        if (value == null) return null;
-        return long.Parse(value.ToString());
-    }
-
-    public double? GetDouble(params string[] keys)
-    {
-        var value = this[keys];
-        if (value == null) return null;
-        return double.Parse(value.ToString());
-    }
-
-    public decimal? GetDecimal(params string[] keys)
-    {
-        var value = this[keys];
-        if (value == null) return null;
-        return decimal.Parse(value.ToString());
-    }
-
-    public JsonArray? GetJsonArray(params string[] keys)
-    {
-        return (JsonArray?)this[keys];
-    }
-
-    public JsonObject? GetJsonObject(params string[] keys)
-    {
-        return (JsonObject?)this[keys];
-    }
-
     public static JsonObject Parse(string data)
     {
         int pos = 0;
